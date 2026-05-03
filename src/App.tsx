@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { Play, Search, X, Flame, Clock, User, ArrowLeft, History, Maximize2, Minimize2, ChevronDown, Trash2 } from 'lucide-react';
+import { Play, Search, X, Flame, Clock, User, ArrowLeft, History, Maximize2, Minimize2, ChevronDown, Trash2, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 interface SearchResult {
@@ -73,14 +73,18 @@ export default function App() {
   const [videos, setVideos] = useState<SearchResult[]>([]);
   const [history, setHistory] = useState<SearchResult[]>([]);
   const [isSearching, setIsSearching] = useState(false);
-  const [activeTab, setActiveTab] = useState<'trending' | 'history'>('trending');
+  const [activeTab, setActiveTab] = useState<'suggested' | 'history'>('suggested');
 
   useEffect(() => {
-    fetchTrending();
+    let loadedHistory: SearchResult[] = [];
     const saved = localStorage.getItem('kevintube_history');
     if (saved) {
-      try { setHistory(JSON.parse(saved)); } catch(e){}
+      try { 
+        loadedHistory = JSON.parse(saved);
+        setHistory(loadedHistory); 
+      } catch(e){}
     }
+    fetchSuggested(loadedHistory);
   }, []);
 
   const addToHistory = (video: SearchResult) => {
@@ -91,14 +95,33 @@ export default function App() {
     });
   };
 
-  const fetchTrending = async () => {
+  const fetchSuggested = async (currentHistory: SearchResult[]) => {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch('/api/trending');
-      if (!res.ok) throw new Error('Failed to fetch trending videos');
-      const data = await res.json();
-      setVideos(data);
+      if (currentHistory && currentHistory.length > 0) {
+        // Find a recent history item to base suggestions on, preferably one with an author
+        const recent = currentHistory[0];
+        // Create a query based on author and partial title
+        const q = `${recent.author?.name || ''} ${recent.title.split(' ').slice(0, 3).join(' ')}`.trim();
+        const res = await fetch(`/api/search?q=${encodeURIComponent(q)}`);
+        if (!res.ok) throw new Error('Failed to fetch suggested videos');
+        const data = await res.json();
+        if (data && data.length > 0) {
+          setVideos(data);
+        } else {
+          // Fallback to trending if search returned no results
+          const fallbackRes = await fetch('/api/trending');
+          const fallbackData = await fallbackRes.json();
+          setVideos(fallbackData);
+        }
+      } else {
+        // Fallback to trending if no history
+        const res = await fetch('/api/trending');
+        if (!res.ok) throw new Error('Failed to fetch trending videos');
+        const data = await res.json();
+        setVideos(data);
+      }
       setIsSearching(false);
     } catch (err) {
       setError('Could not load videos. Please try again later.');
@@ -155,20 +178,20 @@ export default function App() {
   const clearSearch = () => {
     setUrlInput('');
     setIsSearching(false);
-    setActiveTab('trending');
-    fetchTrending();
+    setActiveTab('suggested');
+    fetchSuggested(history);
   };
 
   const displayVideos = isSearching ? videos : (activeTab === 'history' ? history : videos);
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-white font-sans selection:bg-red-500/30">
-      <div className="flex flex-col h-screen overflow-hidden">
+    <div className="min-h-screen bg-zinc-950 text-white font-sans selection:bg-red-500 selection:text-white">
+      <div className="flex flex-col min-h-screen">
         {/* Header / Navbar */}
-        <header className="flex-none fixed top-0 w-full z-30 bg-zinc-950/95 backdrop-blur-xl border-b border-zinc-900 border-b-2">
+        <header className="fixed top-0 w-full z-30 bg-zinc-950 border-b border-zinc-900 border-b-2">
           <div className="max-w-[1600px] mx-auto px-4 sm:px-6 h-20 sm:h-24 flex items-center justify-between gap-3 sm:gap-6">
             <div className="flex items-center gap-3 cursor-pointer shrink-0" onClick={clearSearch}>
-              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-red-600 flex items-center justify-center shadow-lg shadow-red-500/20">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-red-600 flex items-center justify-center shadow-lg">
                 <Play className="w-5 h-5 sm:w-7 sm:h-7 text-white fill-white ml-0.5 sm:ml-1" />
               </div>
               <span className="font-display font-bold text-xl sm:text-3xl tracking-tight hidden md:block">KevinTube</span>
@@ -184,7 +207,7 @@ export default function App() {
                   value={urlInput}
                   onChange={(e) => setUrlInput(e.target.value)}
                   placeholder="Search or paste link..."
-                  className="w-full bg-zinc-900/80 border-2 border-zinc-800 focus:border-red-500/50 rounded-full py-3 sm:py-5 pl-12 sm:pl-16 pr-12 sm:pr-16 text-base sm:text-xl outline-none transition-all placeholder:text-zinc-500 focus:bg-zinc-900 shadow-inner"
+                  className="w-full bg-zinc-900 border-2 border-zinc-800 focus:border-red-500 rounded-full py-3 sm:py-5 pl-12 sm:pl-16 pr-12 sm:pr-16 text-base sm:text-xl outline-none transition-all placeholder:text-zinc-500 focus:bg-zinc-800 shadow-inner"
                 />
                 {urlInput && (
                   <button
@@ -201,26 +224,26 @@ export default function App() {
             <div className="flex items-center gap-2 shrink-0 md:w-[13rem] justify-end">
               <button 
                 onClick={() => { setActiveTab('history'); setIsSearching(false); }}
-                className={`flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-3 rounded-xl sm:rounded-full transition-colors ${activeTab === 'history' && !isSearching ? 'bg-red-600 shadow-lg shadow-red-500/20 text-white' : 'bg-zinc-900 hover:bg-zinc-800 text-zinc-400 hover:text-zinc-200'}`}
+                className={`flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-3 rounded-xl sm:rounded-full transition-colors ${activeTab === 'history' && !isSearching ? 'bg-red-600 shadow-lg text-white' : 'bg-zinc-900 hover:bg-zinc-800 text-zinc-400 hover:text-zinc-200'}`}
                 title="History"
               >
                 <History className="w-5 h-5 sm:w-6 sm:h-6" />
                 <span className="hidden lg:inline font-medium text-lg">History</span>
               </button>
               <button 
-                onClick={() => { setActiveTab('trending'); setIsSearching(false); }}
-                className={`flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-3 rounded-xl sm:rounded-full transition-colors ${activeTab === 'trending' && !isSearching ? 'bg-red-600 shadow-lg shadow-red-500/20 text-white' : 'bg-zinc-900 hover:bg-zinc-800 text-zinc-400 hover:text-zinc-200'}`}
-                title="Trending"
+                onClick={() => { setActiveTab('suggested'); setIsSearching(false); }}
+                className={`flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-3 rounded-xl sm:rounded-full transition-colors ${activeTab === 'suggested' && !isSearching ? 'bg-red-600 shadow-lg text-white' : 'bg-zinc-900 hover:bg-zinc-800 text-zinc-400 hover:text-zinc-200'}`}
+                title="For You"
               >
-                <Flame className="w-5 h-5 sm:w-6 sm:h-6" />
-                <span className="hidden lg:inline font-medium text-lg">Trending</span>
+                <Sparkles className="w-5 h-5 sm:w-6 sm:h-6" />
+                <span className="hidden lg:inline font-medium text-lg">For You</span>
               </button>
             </div>
           </div>
         </header>
 
         {/* Main Content Area */}
-        <main className="flex-1 overflow-y-auto pt-24 sm:pt-32 pb-24 sm:pb-32 px-4 sm:px-6 shadow-inner relative">
+        <main className="flex-1 pt-24 sm:pt-32 pb-24 sm:pb-32 px-4 sm:px-6 relative">
           <div className="max-w-[1600px] mx-auto">
             <div className="flex items-center justify-between gap-3 sm:gap-4 mb-6 sm:mb-10">
               <div className="flex items-center gap-3 sm:gap-4 truncate">
@@ -229,7 +252,7 @@ export default function App() {
                     <button 
                       onClick={clearSearch}
                       className="w-12 h-12 sm:w-14 sm:h-14 shrink-0 rounded-full bg-zinc-900 flex items-center justify-center hover:bg-zinc-800 transition-colors active:scale-95"
-                      aria-label="Back to Trending"
+                      aria-label="Back to Recommended"
                     >
                       <ArrowLeft className="w-6 h-6 sm:w-7 sm:h-7 text-zinc-400" />
                     </button>
@@ -237,17 +260,17 @@ export default function App() {
                   </>
                 ) : activeTab === 'history' ? (
                   <>
-                    <div className="w-12 h-12 sm:w-14 sm:h-14 shrink-0 rounded-full bg-red-500/10 flex items-center justify-center">
+                    <div className="w-12 h-12 sm:w-14 sm:h-14 shrink-0 rounded-full bg-zinc-900 flex items-center justify-center border border-zinc-800">
                       <History className="w-6 h-6 sm:w-7 sm:h-7 text-red-500" />
                     </div>
                     <h2 className="text-2xl sm:text-3xl font-display font-bold text-white truncate">Watch History</h2>
                   </>
                 ) : (
                   <>
-                    <div className="w-12 h-12 sm:w-14 sm:h-14 shrink-0 rounded-full bg-red-500/10 flex items-center justify-center">
-                      <Flame className="w-6 h-6 sm:w-7 sm:h-7 text-red-500" />
+                    <div className="w-12 h-12 sm:w-14 sm:h-14 shrink-0 rounded-full bg-zinc-900 flex items-center justify-center border border-zinc-800">
+                      <Sparkles className="w-6 h-6 sm:w-7 sm:h-7 text-red-500" />
                     </div>
-                    <h2 className="text-2xl sm:text-3xl font-display font-bold text-white truncate">Trending Now</h2>
+                    <h2 className="text-2xl sm:text-3xl font-display font-bold text-white truncate">Recommended for You</h2>
                   </>
                 )}
               </div>
@@ -255,7 +278,7 @@ export default function App() {
               {!isSearching && activeTab === 'history' && history.length > 0 && (
                    <button 
                       onClick={() => { setHistory([]); localStorage.removeItem('kevintube_history'); }}
-                      className="flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-2.5 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 hover:text-red-300 transition-colors"
+                      className="flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-2.5 rounded-lg bg-zinc-900 text-red-400 hover:bg-zinc-800 hover:text-red-300 transition-colors border border-zinc-800"
                    >
                       <Trash2 className="w-4 h-4 sm:w-5 sm:h-5" />
                       <span className="font-medium text-sm sm:text-base hidden sm:block">Clear</span> 
@@ -265,7 +288,7 @@ export default function App() {
             </div>
 
             {error && (
-              <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 mb-8 max-w-md">
+              <div className="p-4 rounded-xl bg-zinc-900 border border-red-500 text-red-400 mb-8 max-w-md">
                 {error}
               </div>
             )}
@@ -290,9 +313,11 @@ export default function App() {
                     key={video.videoId + index}
                     className="group flex flex-col active:scale-[0.98] transition-transform"
                   >
-                    <div 
-                      className="relative w-full aspect-video rounded-2xl overflow-hidden mb-3 sm:mb-4 bg-zinc-900 border border-zinc-800/50 shadow-md cursor-pointer"
-                      onClick={() => playVideo(video)}
+                    <button 
+                      type="button"
+                      className="relative w-full aspect-video rounded-2xl overflow-hidden mb-3 sm:mb-4 bg-zinc-900 border border-zinc-800 shadow-md cursor-pointer block p-0 text-left appearance-none focus:outline-none"
+                      onClick={(e) => { e.preventDefault(); playVideo(video); }}
+                      style={{ aspectRatio: '16/9' }}
                     >
                       <img
                         src={video.image || video.thumbnail}
@@ -300,15 +325,19 @@ export default function App() {
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                         loading="lazy"
                       />
-                      <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-300"></div>
+                      <div className="absolute inset-0 bg-black opacity-10 group-hover:opacity-0 transition-opacity duration-300 pointer-events-none"></div>
                       {video.timestamp && (
-                        <div className="absolute bottom-2 right-2 sm:bottom-3 sm:right-3 bg-black/80 backdrop-blur-md text-xs sm:text-sm font-semibold px-2 sm:px-2.5 py-1 rounded-md text-zinc-100 border border-white/10">
+                        <div className="absolute bottom-2 right-2 sm:bottom-3 sm:right-3 bg-black text-xs sm:text-sm font-semibold px-2 sm:px-2.5 py-1 rounded-md text-zinc-100 border border-zinc-700 pointer-events-none" style={{ backgroundColor: 'rgba(0,0,0,0.8)' }}>
                           {video.timestamp}
                         </div>
                       )}
-                    </div>
+                    </button>
                     
-                    <div className="px-1 sm:px-2 cursor-pointer flex-1 flex flex-col" onClick={() => playVideo(video)}>
+                    <button 
+                      type="button"
+                      className="px-1 sm:px-2 cursor-pointer flex-1 flex flex-col block p-0 bg-transparent text-left appearance-none focus:outline-none" 
+                      onClick={(e) => { e.preventDefault(); playVideo(video); }}
+                    >
                       <h3 className="font-semibold text-zinc-100 line-clamp-2 leading-snug group-hover:text-red-400 transition-colors mb-2 text-base sm:text-lg">
                         {video.title}
                       </h3>
@@ -323,7 +352,7 @@ export default function App() {
                           {formatViews(video.views || 0)}
                         </span>
                       </div>
-                    </div>
+                    </button>
                   </motion.div>
                 ))}
               </div>
@@ -364,10 +393,10 @@ export default function App() {
             }
           >
             {/* Top Bar Navigation (Player) */}
-            <div className={`flex items-center justify-between px-3 sm:px-6 py-2 sm:py-4 bg-zinc-900/90 backdrop-blur-xl border-b border-white/5 ${activeVideo.isMinimized ? 'shrink-0' : 'absolute top-0 left-0 right-0 z-20'}`}>
+            <div className={`flex items-center justify-between px-3 sm:px-6 py-2 sm:py-4 bg-zinc-900 border-b border-zinc-800 ${activeVideo.isMinimized ? 'shrink-0' : 'absolute top-0 left-0 right-0 z-20'}`}>
                <div className="flex items-center gap-3 sm:gap-4 truncate pr-4">
                   {!activeVideo.isMinimized && (
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-red-600/20 flex items-center justify-center border border-red-500/20 shrink-0 shadow-lg">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-zinc-800 flex items-center justify-center border border-zinc-700 shrink-0 shadow-lg">
                       <Play className="w-5 h-5 sm:w-6 sm:h-6 text-red-500 fill-red-500 ml-1" />
                     </div>
                   )}
@@ -384,13 +413,13 @@ export default function App() {
                <div className="flex items-center gap-1 sm:gap-2 shrink-0">
                   <button 
                     onClick={() => setActiveVideo(p => p ? { ...p, isMinimized: !p.isMinimized } : null)}
-                    className="p-2 sm:p-3 bg-white/5 hover:bg-white/10 rounded-full transition-colors backdrop-blur-md"
+                    className="p-2 sm:p-3 bg-zinc-800 hover:bg-zinc-700 rounded-full transition-colors focus:outline-none"
                   >
                     {activeVideo.isMinimized ? <Maximize2 className="w-5 h-5" /> : <ChevronDown className="w-6 h-6" />}
                   </button>
                   <button 
                     onClick={() => setActiveVideo(null)}
-                    className="p-2 sm:p-3 bg-white/5 hover:bg-white/10 rounded-full transition-colors hover:text-red-400 hover:bg-red-500/10 backdrop-blur-md"
+                    className="p-2 sm:p-3 bg-zinc-800 hover:bg-red-900 text-zinc-100 hover:text-red-400 rounded-full transition-colors focus:outline-none"
                   >
                     <X className="w-5 h-5 sm:w-6 sm:h-6" />
                   </button>
