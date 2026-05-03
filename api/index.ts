@@ -19,6 +19,29 @@ app.get('/api/search', async (req, res) => {
   }
 });
 
+app.get('/api/video/:id', async (req, res) => {
+  try {
+    const videoId = req.params.id;
+    const results = await yts({ videoId: videoId });
+    if (results) {
+      res.json({
+        videoId: results.videoId,
+        title: results.title,
+        thumbnail: results.thumbnail,
+        image: results.image,
+        timestamp: results.timestamp,
+        author: results.author,
+        views: results.views
+      });
+    } else {
+      res.status(404).json({ error: 'Video not found' });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to load video details' });
+  }
+});
+
 app.get('/api/trending', async (req, res) => {
   try {
     const results = await yts('trending');
