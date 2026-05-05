@@ -175,108 +175,105 @@ Yêu cầu 2-3 tuyến đường (Cao tốc, quốc lộ). Phí cầu đường 
 
   return (
     <div className="min-h-screen bg-black text-white font-sans selection:bg-blue-600 overflow-x-hidden">
-      {/* Background Decor */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-600/5 blur-[120px] rounded-full"></div>
-        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-emerald-600/5 blur-[120px] rounded-full"></div>
-      </div>
+      {/* Background Decor - Simplified for Car */}
+      <div className="fixed inset-0 bg-black pointer-events-none"></div>
 
-      {/* Header */}
-      <header className="fixed top-0 w-full z-[100] h-20 px-8 flex items-center justify-between glass border-b border-white/5">
+      {/* Header - Solid background for car accessibility */}
+      <header className="fixed top-0 w-full z-[100] h-20 px-8 flex items-center justify-between bg-zinc-900 border-b border-zinc-800">
         <div className="flex items-center gap-6">
           <button 
              onClick={() => navigate('/')}
-             className="w-12 h-12 rounded-2xl bg-zinc-900/50 border border-zinc-800 flex items-center justify-center hover:bg-zinc-800 transition-all active:scale-90"
+             className="w-10 h-10 rounded-xl bg-zinc-800 border border-zinc-700 flex items-center justify-center active:scale-90"
           >
-            <Home className="w-6 h-6 text-zinc-400" />
+            <Home className="w-5 h-5 text-zinc-400" />
           </button>
           <div className="flex items-center gap-3">
-             <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-900/30">
-                <Calculator className="w-6 h-6 text-white" />
+             <div className="w-10 h-10 bg-blue-700 rounded-xl flex items-center justify-center">
+                <Calculator className="w-5 h-5 text-white" />
              </div>
-             <h1 className="font-display font-black text-2xl tracking-tighter uppercase italic">Smart Pricing</h1>
+             <h1 className="font-display font-black text-xl tracking-tighter uppercase italic">Tính Cước</h1>
           </div>
         </div>
-        <div className="hidden sm:flex items-center gap-4 px-5 py-2.5 rounded-2xl bg-zinc-900/50 border border-zinc-800 shadow-xl">
-           <Gauge className="w-4 h-4 text-blue-500 animate-pulse" />
-           <span className="text-[10px] font-black tracking-[0.3em] text-zinc-400 uppercase">AI Processor Active</span>
+        <div className="hidden sm:flex items-center gap-4 px-4 py-2 rounded-xl bg-zinc-800 border border-zinc-700">
+           <Gauge className="w-4 h-4 text-blue-500" />
+           <span className="text-[9px] font-black tracking-widest text-zinc-400 uppercase">AI ACTIVE</span>
         </div>
       </header>
 
-      <main className="pt-32 pb-40 px-6 max-w-4xl mx-auto z-10 relative">
+      <main className="pt-28 pb-40 px-6 max-w-4xl mx-auto z-10 relative">
         <motion.div 
-           initial={{ y: 20, opacity: 0 }}
-           animate={{ y: 0, opacity: 1 }}
-           className="bg-zinc-900/40 border border-zinc-800/50 rounded-[3rem] p-10 backdrop-blur-3xl shadow-2xl space-y-10"
+           initial={{ opacity: 0 }}
+           animate={{ opacity: 1 }}
+           className="bg-zinc-900 border border-zinc-800 rounded-[2.5rem] p-8 shadow-2xl space-y-8"
         >
           {/* Options Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-[10px] font-black text-zinc-500 uppercase tracking-[0.3em] mb-4 flex items-center gap-2">
+              <label className="block text-[9px] font-black text-zinc-500 uppercase tracking-widest mb-3 flex items-center gap-2">
                 <Car className="w-4 h-4 text-zinc-600" /> Phương tiện
               </label>
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-3 gap-2">
                  {['4 chỗ', '7 chỗ', '16 chỗ'].map(t => (
-                   <button 
-                     key={t}
-                     onClick={() => setCarType(t)}
-                     className={`py-3.5 rounded-2xl border-2 font-bold transition-all text-sm ${carType === t ? 'bg-white text-black border-white shadow-xl translate-y-[-2px]' : 'bg-black/40 border-zinc-800 text-zinc-500 hover:border-zinc-600'}`}
-                   >
-                     {t}
-                   </button>
+                    <button 
+                      key={t}
+                      onClick={() => setCarType(t)}
+                      className={`py-3 rounded-xl border-2 font-bold transition-all text-xs ${carType === t ? 'bg-white text-black border-white' : 'bg-black border-zinc-800 text-zinc-500'}`}
+                    >
+                      {t}
+                    </button>
                  ))}
               </div>
             </div>
             <div>
-              <label className="block text-[10px] font-black text-zinc-500 uppercase tracking-[0.3em] mb-4 flex items-center gap-2">
-                <Fuel className="w-4 h-4 text-zinc-600" /> Hệ thống động lực
+              <label className="block text-[9px] font-black text-zinc-500 uppercase tracking-widest mb-3 flex items-center gap-2">
+                <Fuel className="w-4 h-4 text-zinc-600" /> Động lực
               </label>
-              <div className="flex gap-3">
+              <div className="flex gap-2">
                 {['Xăng', 'Điện'].map(t => (
                   <button
                     key={t}
                     onClick={() => setFuelType(t)}
-                    className={`flex-1 py-3.5 rounded-2xl border-2 font-bold transition-all text-sm ${fuelType === t ? 'bg-blue-600 border-blue-500 text-white shadow-lg shadow-blue-900/40 translate-y-[-2px]' : 'bg-black/40 border-zinc-800 text-zinc-500 hover:border-zinc-600'}`}
+                    className={`flex-1 py-3 rounded-xl border-2 font-bold transition-all text-xs ${fuelType === t ? 'bg-blue-700 border-blue-600 text-white' : 'bg-black border-zinc-800 text-zinc-500'}`}
                   >
-                    {t === 'Xăng' ? '⛽ Năng lượng hóa thạch' : '⚡ Động cơ điện'}
+                    {t === 'Xăng' ? '⛽ Xăng' : '⚡ Điện'}
                   </button>
                 ))}
               </div>
             </div>
           </div>
 
-          <div className="h-px bg-zinc-800/50"></div>
+          <div className="h-px bg-zinc-800"></div>
 
           {/* Locations */}
-          <div className="space-y-8">
+          <div className="space-y-6">
             <div className="relative" ref={departureRef}>
-              <label className="block text-[10px] font-black text-zinc-500 uppercase tracking-[0.3em] mb-4 flex items-center gap-2">
-                <MapPin className="w-4 h-4 text-emerald-500" /> Lộ trình xuất phát
+              <label className="block text-[9px] font-black text-zinc-500 uppercase tracking-widest mb-3 flex items-center gap-2">
+                <MapPin className="w-4 h-4 text-emerald-500" /> Điểm đi
               </label>
               <div className="relative group">
                 <input 
                   type="text" 
-                  placeholder="Nhập địa điểm khởi hành..."
+                  placeholder="Nhập địa điểm đi..."
                   value={departure}
                   onChange={(e) => { setDeparture(e.target.value); if (e.target.value === '') setDepartureLocation(null); }}
-                  className="w-full bg-black/40 border border-zinc-800 rounded-3xl pl-14 pr-12 py-4.5 text-lg outline-none focus:bg-black/60 focus:border-blue-500 transition-all text-white placeholder:text-zinc-700 font-medium"
+                  className="w-full bg-black border border-zinc-800 rounded-2xl pl-12 pr-10 py-3.5 text-base outline-none focus:border-blue-500 transition-all text-white placeholder:text-zinc-700 font-medium"
                 />
-                <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-6 h-6 text-zinc-600 group-focus-within:text-blue-500" />
-                {departure && <button onClick={() => setDeparture('')} className="absolute right-6 top-1/2 -translate-y-1/2"><X className="w-5 h-5 text-zinc-500" /></button>}
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-600" />
+                {departure && <button onClick={() => setDeparture('')} className="absolute right-4 top-1/2 -translate-y-1/2"><X className="w-4 h-4 text-zinc-500" /></button>}
               </div>
 
               <AnimatePresence>
                 {departureResults.length > 0 && (
                   <motion.div 
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 10 }}
-                    className="absolute top-full left-0 right-0 mt-4 h-80 overflow-y-auto glass border border-white/10 rounded-[2rem] shadow-2xl z-[1000] no-scrollbar"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="absolute top-full left-0 right-0 mt-2 h-72 overflow-y-auto bg-zinc-900 border border-zinc-800 rounded-2xl shadow-2xl z-[1000] no-scrollbar"
                   >
                     {departureResults.map((loc, i) => (
-                      <button key={i} onClick={() => { setDeparture(loc.display_name); setDepartureLocation(loc); setDepartureResults([]); }} className="w-full text-left px-8 py-6 hover:bg-white/5 border-b border-white/[0.03] transition-colors group">
-                        <div className="font-bold text-white text-lg truncate group-hover:text-blue-400 transition-colors">{loc.display_name.split(',')[0]}</div>
-                        <div className="text-xs text-zinc-500 truncate mt-1.5 uppercase font-black tracking-widest">{loc.display_name}</div>
+                      <button key={i} onClick={() => { setDeparture(loc.display_name); setDepartureLocation(loc); setDepartureResults([]); }} className="w-full text-left px-6 py-4 hover:bg-zinc-800 border-b border-zinc-800/50 transition-colors">
+                        <div className="font-bold text-white text-sm truncate">{loc.display_name.split(',')[0]}</div>
+                        <div className="text-[10px] text-zinc-500 truncate mt-1 tracking-wider">{loc.display_name}</div>
                       </button>
                     ))}
                   </motion.div>
@@ -285,32 +282,32 @@ Yêu cầu 2-3 tuyến đường (Cao tốc, quốc lộ). Phí cầu đường 
             </div>
 
             <div className="relative" ref={destinationRef}>
-              <label className="block text-[10px] font-black text-zinc-500 uppercase tracking-[0.3em] mb-4 flex items-center gap-2">
-                <Navigation className="w-4 h-4 text-red-500" /> Điểm đến mong muốn
+              <label className="block text-[9px] font-black text-zinc-500 uppercase tracking-widest mb-3 flex items-center gap-2">
+                <Navigation className="w-4 h-4 text-red-500" /> Điểm đến
               </label>
               <div className="relative group">
                 <input 
                   type="text" 
-                  placeholder="Nhập địa lý kết thúc..."
+                  placeholder="Nhập địa điểm đến..."
                   value={destination}
                   onChange={(e) => { setDestination(e.target.value); if (e.target.value === '') setDestinationLocation(null); }}
-                  className="w-full bg-black/40 border border-zinc-800 rounded-3xl pl-14 pr-12 py-4.5 text-lg outline-none focus:bg-black/60 focus:border-red-500 transition-all text-white placeholder:text-zinc-700 font-medium"
+                  className="w-full bg-black border border-zinc-800 rounded-2xl pl-12 pr-10 py-3.5 text-base outline-none focus:border-red-500 transition-all text-white placeholder:text-zinc-700 font-medium"
                 />
-                <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-6 h-6 text-zinc-600 group-focus-within:text-red-500" />
-                {destination && <button onClick={() => setDestination('')} className="absolute right-6 top-1/2 -translate-y-1/2"><X className="w-5 h-5 text-zinc-500" /></button>}
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-600" />
+                {destination && <button onClick={() => setDestination('')} className="absolute right-4 top-1/2 -translate-y-1/2"><X className="w-4 h-4 text-zinc-500" /></button>}
               </div>
               <AnimatePresence>
                 {destinationResults.length > 0 && (
                   <motion.div 
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 10 }}
-                    className="absolute top-full left-0 right-0 mt-4 h-80 overflow-y-auto glass border border-white/10 rounded-[2rem] shadow-2xl z-[1000] no-scrollbar"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="absolute top-full left-0 right-0 mt-2 h-72 overflow-y-auto bg-zinc-900 border border-zinc-800 rounded-2xl shadow-2xl z-[1000] no-scrollbar"
                   >
                     {destinationResults.map((loc, i) => (
-                      <button key={i} onClick={() => { setDestination(loc.display_name); setDestinationLocation(loc); setDestinationResults([]); }} className="w-full text-left px-8 py-6 hover:bg-white/5 border-b border-white/[0.03] transition-colors group">
-                        <div className="font-bold text-white text-lg truncate group-hover:text-red-400 transition-colors">{loc.display_name.split(',')[0]}</div>
-                        <div className="text-xs text-zinc-500 truncate mt-1.5 uppercase font-black tracking-widest">{loc.display_name}</div>
+                      <button key={i} onClick={() => { setDestination(loc.display_name); setDestinationLocation(loc); setDestinationResults([]); }} className="w-full text-left px-6 py-4 hover:bg-zinc-800 border-b border-zinc-800/50 transition-colors">
+                        <div className="font-bold text-white text-sm truncate">{loc.display_name.split(',')[0]}</div>
+                        <div className="text-[10px] text-zinc-500 truncate mt-1 tracking-wider">{loc.display_name}</div>
                       </button>
                     ))}
                   </motion.div>
@@ -322,22 +319,21 @@ Yêu cầu 2-3 tuyến đường (Cao tốc, quốc lộ). Phí cầu đường 
           <button 
             onClick={calculateFares}
             disabled={isCalculating || !departureLocation || !destinationLocation}
-            className="w-full bg-blue-600 hover:bg-blue-500 disabled:bg-zinc-900 disabled:opacity-40 disabled:border-zinc-800 border border-blue-400/20 text-white font-black py-6 rounded-3xl flex items-center justify-center gap-4 transition-all text-xl shadow-2xl shadow-blue-900/40 active:scale-95"
+            className="w-full bg-blue-700 hover:bg-blue-600 disabled:bg-zinc-900 disabled:text-zinc-700 border border-blue-600/20 text-white font-black py-5 rounded-2xl flex items-center justify-center gap-3 transition-all text-lg"
           >
-            {isCalculating ? <Loader2 className="w-8 h-8 animate-spin" /> : <Calculator className="w-8 h-8" />}
-            {isCalculating ? 'ĐANG PHÂN TÍCH...' : 'DỰ TOÁN HÀNH TRÌNH'}
+            {isCalculating ? <Loader2 className="w-6 h-6 animate-spin" /> : <Calculator className="w-6 h-6" />}
+            {isCalculating ? 'ĐANG DỰ TOÁN...' : 'TÍNH CƯỚC NGAY'}
           </button>
           
           <AnimatePresence>
             {error && (
               <motion.div 
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 10 }}
-                className="p-5 flex items-start gap-4 rounded-3xl bg-red-500/5 border border-red-500/20 glass-red"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="p-4 flex items-start gap-4 rounded-xl bg-red-900/30 border border-red-900/50"
               >
-                <Info className="w-6 h-6 text-red-500 shrink-0 mt-0.5" />
-                <p className="text-red-400 text-sm font-bold leading-relaxed">{error}</p>
+                <Info className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
+                <p className="text-red-400 text-xs font-bold leading-relaxed">{error}</p>
               </motion.div>
             )}
           </AnimatePresence>
@@ -347,90 +343,73 @@ Yêu cầu 2-3 tuyến đường (Cao tốc, quốc lộ). Phí cầu đường 
         <AnimatePresence>
           {routes.length > 0 && (
             <motion.div 
-               initial={{ opacity: 0, scale: 0.95 }}
-               animate={{ opacity: 1, scale: 1 }}
-               className="mt-20 space-y-12"
+               initial={{ opacity: 0 }}
+               animate={{ opacity: 1 }}
+               className="mt-12 space-y-10"
             >
-                <div className="flex items-center gap-6">
-                   <h2 className="text-4xl font-display font-black italic tracking-tighter uppercase shrink-0">Lộ trình <span className="text-blue-600">tối ưu</span></h2>
+                <div className="flex items-center gap-4">
+                   <h2 className="text-2xl font-display font-black italic tracking-tighter uppercase shrink-0">Lộ trình <span className="text-blue-500">tối ưu</span></h2>
                    <div className="h-px w-full bg-zinc-800"></div>
                 </div>
                 
                 {routes.map((route, index) => (
-                    <motion.div 
-                      initial={{ x: index % 2 === 0 ? -20 : 20, opacity: 0 }}
-                      animate={{ x: 0, opacity: 1 }}
-                      transition={{ delay: index * 0.2 }}
-                      key={index} 
-                      className="bg-zinc-900/40 border border-zinc-800/50 rounded-[3rem] overflow-hidden shadow-2xl glass"
-                    >
-                        <div className="p-10 border-b border-white/5 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                    <div key={index} className="bg-zinc-900 border border-zinc-800 rounded-[2rem] overflow-hidden shadow-2xl">
+                        <div className="p-8 border-b border-zinc-800 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                             <div>
-                                <div className="flex items-center gap-3 mb-3">
-                                  <span className="px-3 py-1 bg-blue-600 rounded-lg text-[10px] font-black uppercase tracking-widest text-white">ROUTE 0{index + 1}</span>
-                                  <h4 className="font-display font-black text-3xl italic uppercase tracking-tighter">{route.name}</h4>
+                                <div className="flex items-center gap-2 mb-2">
+                                  <span className="px-2 py-0.5 bg-blue-700 rounded text-[9px] font-black uppercase tracking-widest text-white">R0{index + 1}</span>
+                                  <h4 className="font-display font-black text-xl italic uppercase tracking-tighter">{route.name}</h4>
                                 </div>
-                                <div className="flex items-center gap-6">
-                                   <div className="flex items-center gap-3">
-                                      <Clock className="w-4 h-4 text-blue-500" />
-                                      <span className="text-xs font-black uppercase tracking-widest text-zinc-400">{route.duration}</span>
+                                <div className="flex items-center gap-4 text-zinc-500 text-[10px] font-black uppercase tracking-widest">
+                                   <div className="flex items-center gap-2">
+                                      <Clock className="w-3 h-3 text-blue-500" /> {route.duration}
                                    </div>
-                                   <div className="w-1 h-1 rounded-full bg-zinc-800"></div>
-                                   <div className="flex items-center gap-3">
-                                      <MapPin className="w-4 h-4 text-emerald-500" />
-                                      <span className="text-xs font-black uppercase tracking-widest text-zinc-400">{route.distance} KM</span>
+                                   <div className="flex items-center gap-2">
+                                      <MapPin className="w-3 h-3 text-emerald-500" /> {route.distance} KM
                                    </div>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-3 bg-zinc-800/50 px-6 py-4 rounded-2xl border border-zinc-700">
-                               <ShieldCheck className="w-5 h-5 text-emerald-500" />
-                               <span className="text-xs font-black uppercase tracking-widest text-emerald-500">Verified System</span>
+                            <div className="bg-emerald-950/30 px-4 py-2 rounded-xl border border-emerald-900/50">
+                               <span className="text-[9px] font-black uppercase tracking-widest text-emerald-500">System Verified</span>
                             </div>
                         </div>
                         
-                        <div className="p-10 space-y-10">
-                            <div className="bg-black/60 p-8 rounded-[2rem] border border-white/5 relative overflow-hidden group">
-                                <div className="absolute top-0 left-0 w-1.5 h-full bg-blue-600"></div>
-                                <p className="text-lg text-zinc-400 font-medium italic relative z-10 leading-relaxed">"{route.note}"</p>
+                        <div className="p-8 space-y-8">
+                            <div className="bg-black p-6 rounded-2xl border border-zinc-800">
+                                <p className="text-sm text-zinc-400 font-medium italic leading-relaxed">"{route.note}"</p>
                             </div>
                             
-                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-                              <div className="space-y-6">
-                                  <div className="flex justify-between items-end pb-3 border-b border-zinc-800">
-                                      <span className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-500">Chi tiết phí cầu đường</span>
-                                      <span className="text-lg font-black text-white">{formatCurrency(route.totalTollFee)}</span>
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                              <div className="space-y-4">
+                                  <div className="flex justify-between items-end pb-2 border-b border-zinc-800">
+                                      <span className="text-[9px] font-black uppercase tracking-widest text-zinc-500">Cầu đường</span>
+                                      <span className="text-base font-black text-white">{formatCurrency(route.totalTollFee)}</span>
                                   </div>
                                   {route.tollBooths.length > 0 ? (
-                                      <div className="space-y-3">
+                                      <div className="space-y-2">
                                           {route.tollBooths.map((b, i) => (
-                                              <div key={i} className="flex justify-between items-center bg-zinc-800/30 p-4 rounded-2xl border border-white/5">
-                                                  <span className="text-xs font-bold text-zinc-300">{i+1}. {b.name}</span>
-                                                  <span className="text-sm font-black text-zinc-500">{formatCurrency(b.fee)}</span>
+                                              <div key={i} className="flex justify-between items-center bg-zinc-800/50 p-3 rounded-xl border border-zinc-800">
+                                                  <span className="text-[10px] font-bold text-zinc-300">{b.name}</span>
+                                                  <span className="text-[10px] font-black text-zinc-500">{formatCurrency(b.fee)}</span>
                                               </div>
                                           ))}
                                       </div>
-                                  ) : (
-                                    <div className="bg-zinc-800/20 rounded-2xl p-6 text-center text-zinc-700 text-xs font-black uppercase tracking-widest border border-dashed border-zinc-800">
-                                      KHÔNG PHÁT SINH PHÍ TRẠM
-                                    </div>
-                                  )}
+                                  ) : null}
                               </div>
 
-                              <div className="grid grid-cols-1 gap-6">
-                                  <div className="relative overflow-hidden bg-emerald-600/10 border border-emerald-500/20 rounded-[2.5rem] p-8 flex flex-col items-center justify-center text-center group">
-                                      <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-600/5 blur-3xl rounded-full"></div>
-                                      <div className="text-[10px] font-black uppercase tracking-[0.4em] text-emerald-500 mb-2">Giá niêm yết thu khách</div>
-                                      <div className="text-5xl font-display font-black text-white italic tracking-tighter group-hover:scale-110 transition-transform duration-500">{formatCurrency(route.proposedPrice)}</div>
-                                      <div className="mt-4 px-4 py-1.5 bg-emerald-600 text-[10px] font-black text-white uppercase tracking-widest rounded-full">Recommended</div>
+                              <div className="flex flex-col gap-4">
+                                  <div className="bg-emerald-900/20 border border-emerald-800/50 rounded-2xl p-6 text-center">
+                                      <div className="text-[9px] font-black uppercase tracking-[0.2em] text-emerald-500 mb-1">Dự toán thu khách</div>
+                                      <div className="text-3xl font-display font-black text-white italic tracking-tighter">{formatCurrency(route.proposedPrice)}</div>
                                   </div>
-                                  <div className="bg-zinc-900/60 border border-zinc-800 rounded-[2rem] p-6 flex flex-col items-center justify-center text-center">
-                                      <div className="text-[10px] font-black uppercase tracking-[0.4em] text-zinc-600 mb-1">Giá sàn lủng (Hợp đồng tối thiểu)</div>
-                                      <div className="text-2xl font-display font-black text-white/50">{formatCurrency(route.lowestPrice)}</div>
+                                  <div className="bg-zinc-800/50 border border-zinc-800 rounded-xl p-4 text-center">
+                                      <div className="text-[8px] font-black uppercase tracking-widest text-zinc-600">Giá sàn bảo hòa</div>
+                                      <div className="text-lg font-display font-black text-white/40">{formatCurrency(route.lowestPrice)}</div>
                                   </div>
                               </div>
                             </div>
                         </div>
-                    </motion.div>
+                    </div>
                 ))}
             </motion.div>
           )}
