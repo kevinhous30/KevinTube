@@ -6,7 +6,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Play, Search, X, Flame, Clock, User, ArrowLeft, History, Maximize2, Minimize2, ChevronDown, Trash2, Sparkles, Volume2, MessageSquare, VolumeX } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import ReactPlayer from 'react-player';
+import YouTube from 'react-youtube';
 
 interface SearchResult {
   videoId: string;
@@ -78,8 +78,7 @@ export default function App() {
   const [activeTab, setActiveTab] = useState<'suggested' | 'history'>('suggested');
   
   const playerContainerRef = useRef<HTMLDivElement>(null);
-  const playerRef = useRef<ReactPlayer>(null);
-
+  
   useEffect(() => {
     if (playerContainerRef.current && activeVideo && !activeVideo.isMinimized) {
       playerContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
@@ -463,32 +462,26 @@ export default function App() {
               {/* Top/Left Column: Video + Metadata */}
               <div className="w-full flex flex-col">
                 <div className={activeVideo.isMinimized ? 'absolute inset-0' : 'w-full aspect-video bg-black sm:rounded-2xl overflow-hidden shadow-2xl shrink-0 sticky top-4 z-30'}>
-                  <ReactPlayer
-                    ref={playerRef}
-                    url={activeVideo ? `https://www.youtube.com/watch?v=${activeVideo.id}` : ''}
-                    width="100%"
-                    height="100%"
-                    playing={true}
-                    controls={true}
-                    playsinline={true}
-                    onReady={() => {
-                      // Attempt to force play using internal player once ready
-                      const internalPlayer = playerRef.current?.getInternalPlayer();
-                      if (internalPlayer && typeof internalPlayer.playVideo === 'function') {
-                        internalPlayer.playVideo();
+                  <YouTube
+                    key={activeVideo.id}
+                    videoId={activeVideo.id}
+                    className="w-full h-full"
+                    opts={{
+                      width: '100%',
+                      height: '100%',
+                      playerVars: {
+                        autoplay: 1,
+                        playsinline: 1,
+                        modestbranding: 1,
+                        rel: 0,
+                        iv_load_policy: 3
                       }
                     }}
-                    onEnded={handleVideoEnded}
-                    config={{
-                      youtube: {
-                        playerVars: {
-                          autoplay: 1,
-                          modestbranding: 1,
-                          rel: 0,
-                          origin: window.location.origin
-                        }
-                      }
+                    onReady={(e) => {
+                      e.target.playVideo();
                     }}
+                    onEnd={handleVideoEnded}
+                    style={{ width: '100%', height: '100%' }}
                   />
                 </div>
 
