@@ -76,6 +76,15 @@ export default function App() {
   const [history, setHistory] = useState<SearchResult[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [activeTab, setActiveTab] = useState<'suggested' | 'history'>('suggested');
+  
+  const playerContainerRef = useRef<HTMLDivElement>(null);
+  const playerRef = useRef<ReactPlayer>(null);
+
+  useEffect(() => {
+    if (playerContainerRef.current && activeVideo && !activeVideo.isMinimized) {
+      playerContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [activeVideo?.id]);
 
   useEffect(() => {
     let loadedHistory: SearchResult[] = [];
@@ -208,6 +217,10 @@ export default function App() {
     setIsSearching(false);
     setActiveTab('suggested');
     fetchSuggested(history);
+    if (activeVideo && !activeVideo.isMinimized) {
+      setActiveVideo(prev => prev ? { ...prev, isMinimized: true } : null);
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const displayVideos = isSearching ? videos : (activeTab === 'history' ? history : videos);
@@ -416,56 +429,55 @@ export default function App() {
             transition={{ type: "spring", damping: 25, stiffness: 200 }}
             className={
               activeVideo.isMinimized
-                ? "fixed bottom-0 sm:bottom-6 right-0 sm:right-6 w-full sm:w-[500px] bg-zinc-950 sm:rounded-2xl shadow-[0_-10px_40px_rgba(0,0,0,0.5)] sm:shadow-[0_20px_50px_rgba(0,0,0,0.8)] z-50 border-t sm:border border-zinc-800 overflow-hidden flex flex-col"
-                : "fixed inset-0 z-50 bg-black flex flex-col"
+                ? "fixed bottom-4 sm:bottom-6 right-4 sm:right-6 w-[calc(100%-2rem)] sm:w-[400px] bg-zinc-900 rounded-xl sm:rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.8)] z-50 border border-zinc-800 overflow-hidden flex flex-col"
+                : "fixed top-[4.5rem] sm:top-[5.5rem] bottom-0 left-0 right-0 z-40 bg-zinc-950 overflow-y-auto"
             }
           >
-            {/* Top Bar Navigation (Player) */}
-            <div className={`flex items-center justify-between px-3 sm:px-6 py-2 sm:py-4 bg-zinc-900 border-b border-zinc-800 ${activeVideo.isMinimized ? 'shrink-0' : 'absolute top-0 left-0 right-0 z-20'}`}>
-               <div className="flex items-center gap-3 sm:gap-4 truncate pr-4">
-                  {!activeVideo.isMinimized && (
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-zinc-800 flex items-center justify-center border border-zinc-700 shrink-0 shadow-lg">
-                      <Play className="w-5 h-5 sm:w-6 sm:h-6 text-red-500 fill-red-500 ml-1" />
-                    </div>
-                  )}
-                  <div className="flex flex-col truncate">
-                    <span className={`font-display font-bold truncate ${activeVideo.isMinimized ? 'text-sm sm:text-base text-zinc-100' : 'text-xl sm:text-2xl text-white drop-shadow-md'}`}>
-                      {activeVideo.details?.title || 'KevinTube Player'}
-                    </span>
-                    {activeVideo.isMinimized && activeVideo.details && (
-                      <span className="text-xs text-zinc-400 truncate mt-0.5">{activeVideo.details.author?.name}</span>
-                    )}
-                  </div>
-               </div>
-               
-               <div className="flex items-center gap-1 sm:gap-2 shrink-0">
-                  <button 
-                    onClick={() => setActiveVideo(p => p ? { ...p, isMinimized: !p.isMinimized } : null)}
-                    className="p-2 sm:p-3 bg-zinc-800 hover:bg-zinc-700 rounded-full transition-colors focus:outline-none"
-                  >
-                    {activeVideo.isMinimized ? <Maximize2 className="w-5 h-5" /> : <ChevronDown className="w-6 h-6" />}
-                  </button>
-                  <button 
-                    onClick={() => setActiveVideo(null)}
-                    className="p-2 sm:p-3 bg-zinc-800 hover:bg-red-900 text-zinc-100 hover:text-red-400 rounded-full transition-colors focus:outline-none"
-                  >
-                    <X className="w-5 h-5 sm:w-6 sm:h-6" />
-                  </button>
-               </div>
-            </div>
+            {/* Top Bar Navigation (Player) - Only for Minimized */}
+            {activeVideo.isMinimized && (
+              <div 
+                className="flex items-center justify-between px-3 py-2 bg-zinc-900 border-b border-zinc-800 shrink-0 cursor-pointer"
+                onClick={() => setActiveVideo(p => p ? { ...p, isMinimized: false } : null)}
+              >
+                 <div className="flex flex-col truncate pr-2">
+                   <span className="font-display font-medium text-sm text-zinc-100 truncate">
+                     {activeVideo.details?.title || 'KevinTube Player'}
+                   </span>
+                   <span className="text-xs text-zinc-400 truncate mt-0.5">{activeVideo.details?.author?.name}</span>
+                 </div>
+                 
+                 <div className="flex items-center gap-1 shrink-0">
+                    <button 
+                      onClick={(e) => { e.stopPropagation(); setActiveVideo(null); }}
+                      className="p-1.5 hover:bg-zinc-800 text-zinc-400 hover:text-red-400 rounded-lg transition-colors focus:outline-none"
+                    >
+                      <X className="w-5 h-5" />
+                    </button>
+                 </div>
+              </div>
+            )}
 
             {/* Player Content */}
-            <div className={`flex-1 w-full flex ${activeVideo.isMinimized ? 'bg-black flex-col' : 'bg-zinc-950 flex-col lg:flex-row overflow-y-auto mt-[4.5rem] sm:mt-[5.5rem] p-4 sm:p-6 lg:p-8 gap-6 lg:gap-8 justify-center'}`}>
+            <div ref={playerContainerRef} className={`w-full flex ${activeVideo.isMinimized ? 'bg-black flex-col flex-1' : 'flex-col max-w-5xl mx-auto p-4 sm:p-6 lg:p-8 gap-6 lg:gap-8 min-h-full'}`}>
               
-              {/* Left Column: Video + Metadata */}
-              <div className={activeVideo.isMinimized ? 'w-full aspect-video relative' : 'w-full lg:max-w-5xl flex flex-col'}>
-                <div className={activeVideo.isMinimized ? 'absolute inset-0' : 'w-full aspect-video bg-black rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl shrink-0'}>
+              {/* Top/Left Column: Video + Metadata */}
+              <div className="w-full flex flex-col">
+                <div className={activeVideo.isMinimized ? 'absolute inset-0' : 'w-full aspect-video bg-black sm:rounded-2xl overflow-hidden shadow-2xl shrink-0 sticky top-4 z-30'}>
                   <ReactPlayer
-                    url={`https://www.youtube.com/watch?v=${activeVideo.id}`}
+                    ref={playerRef}
+                    url={activeVideo ? `https://www.youtube.com/watch?v=${activeVideo.id}` : ''}
                     width="100%"
                     height="100%"
                     playing={true}
                     controls={true}
+                    playsinline={true}
+                    onReady={() => {
+                      // Attempt to force play using internal player once ready
+                      const internalPlayer = playerRef.current?.getInternalPlayer();
+                      if (internalPlayer && typeof internalPlayer.playVideo === 'function') {
+                        internalPlayer.playVideo();
+                      }
+                    }}
                     onEnded={handleVideoEnded}
                     config={{
                       youtube: {
@@ -473,7 +485,7 @@ export default function App() {
                           autoplay: 1,
                           modestbranding: 1,
                           rel: 0,
-                          iv_load_policy: 3
+                          origin: window.location.origin
                         }
                       }
                     }}
@@ -482,7 +494,21 @@ export default function App() {
 
                 {!activeVideo.isMinimized && activeVideo.details && (
                   <div className="mt-4 sm:mt-6 flex flex-col">
-                    <h1 className="text-xl sm:text-2xl font-bold text-white mb-2">{activeVideo.details.title}</h1>
+                    <div className="flex items-start justify-between gap-4 mb-2">
+                       <h1 className="text-xl sm:text-2xl font-bold text-white leading-tight flex-1">{activeVideo.details.title}</h1>
+                       <button 
+                          onClick={() => setActiveVideo(p => p ? { ...p, isMinimized: true } : null)}
+                          className="p-2 bg-zinc-900 hover:bg-zinc-800 rounded-full text-zinc-400 hover:text-white transition-colors shrink-0"
+                          title="Thu nhỏ Player"
+                       >
+                          <Minimize2 className="w-5 h-5" />
+                       </button>
+                    </div>
+                    {/* Add note about autoplay in preview */}
+                    <div className="text-xs text-zinc-500 mb-3 hidden sm:block">
+                      Mẹo: Mở trang web ở thẻ mới (New Tab) để tự động phát video mượt mà hơn.
+                    </div>
+                    
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-2">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-zinc-800 flex items-center justify-center">
@@ -511,30 +537,34 @@ export default function App() {
                 )}
               </div>
 
-              {/* Right Column: Related Videos */}
+              {/* Right/Bottom Column: Related Videos */}
               {!activeVideo.isMinimized && (
-                <div className="w-full lg:w-[350px] xl:w-[400px] shrink-0 flex flex-col gap-4">
-                  <h3 className="font-semibold text-lg text-white mb-2">Related Videos</h3>
+                <div className="w-full flex flex-col gap-4 mt-8">
+                  <h3 className="font-semibold text-xl text-white mb-2 pb-2 border-b border-zinc-800">Related Videos</h3>
                   {activeVideo.related && activeVideo.related.length > 0 ? (
-                    <div className="flex flex-col gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 gap-y-8">
                       {activeVideo.related.map((v, i) => (
                         <button
                           key={'related-'+v.videoId+'-'+i}
-                          onClick={() => playVideo(v)}
-                          className="flex gap-3 text-left group hover:bg-zinc-900 p-2 -mx-2 rounded-xl transition-colors"
+                          onClick={(e) => { e.preventDefault(); playVideo(v); }}
+                          className="flex flex-col text-left group transition-transform active:scale-[0.98] focus:outline-none"
                         >
-                          <div className="w-40 shrink-0 aspect-video rounded-lg overflow-hidden bg-zinc-800 relative">
-                            <img src={v.thumbnail || v.image} alt={v.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+                          <div className="w-full aspect-video rounded-xl overflow-hidden bg-zinc-900 border border-zinc-800 relative mb-3">
+                            <img src={v.thumbnail || v.image} alt={v.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" />
+                            <div className="absolute inset-0 bg-black opacity-10 group-hover:opacity-0 transition-opacity duration-300 pointer-events-none"></div>
                             {v.timestamp && (
-                              <div className="absolute bottom-1 right-1 bg-black/80 text-[10px] font-semibold px-1 rounded text-zinc-100">
+                              <div className="absolute bottom-2 right-2 bg-black/80 text-xs font-semibold px-2 py-1 rounded text-zinc-100 border border-zinc-700">
                                 {v.timestamp}
                               </div>
                             )}
                           </div>
-                          <div className="flex flex-col flex-1 overflow-hidden py-0.5">
-                            <h4 className="text-sm font-medium text-white line-clamp-2 group-hover:text-red-400 transition-colors leading-snug">{v.title}</h4>
-                            <p className="text-xs text-zinc-400 mt-1">{v.author?.name}</p>
-                            <p className="text-xs text-zinc-500 mt-0.5">{formatViews(v.views || 0)}</p>
+                          <div className="flex flex-col px-1">
+                            <h4 className="text-base font-semibold text-zinc-100 line-clamp-2 group-hover:text-red-400 transition-colors leading-snug mb-1">{v.title}</h4>
+                            <div className="text-zinc-400 text-sm flex items-center gap-2">
+                               <span className="truncate">{v.author?.name}</span>
+                               <span className="shrink-0">•</span>
+                               <span className="shrink-0">{formatViews(v.views || 0)}</span>
+                            </div>
                           </div>
                         </button>
                       ))}
