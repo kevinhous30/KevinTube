@@ -227,193 +227,143 @@ export default function App() {
   const displayVideos = isSearching ? videos : (activeTab === 'history' ? history : videos);
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-white font-sans selection:bg-red-500 selection:text-white">
+    <div className="min-h-screen bg-[#0f0f0f] text-white font-sans selection:bg-red-500">
       <div className="flex flex-col min-h-screen">
-        {/* Header / Navbar - Fixed Grid */}
-        <header className="fixed top-0 w-full z-[8000] bg-zinc-950 border-b border-zinc-900 h-14 sm:h-16">
-          <div className="max-w-7xl mx-auto px-2 sm:px-4 h-full grid grid-cols-[auto_1fr_auto] items-center gap-2 sm:gap-4 overflow-hidden">
-            <div className="flex items-center gap-2 cursor-pointer shrink-0" onClick={clearSearch}>
-              <div className="w-9 h-9 rounded-lg bg-red-600 flex items-center justify-center shadow-lg active:scale-95 transition-transform">
-                <Play className="w-5 h-5 text-white fill-white ml-0.5" />
-              </div>
-              <span className="font-display font-bold text-lg hidden md:block">KevinTube</span>
-            </div>
+        {/* Mobile-Style Header - High Contrast for Cars */}
+        <header className="fixed top-0 w-full z-[8000] bg-[#0f0f0f] border-b border-zinc-800 h-14 px-3 flex items-center justify-between gap-3 overflow-hidden">
+          <div className="flex items-center gap-2 shrink-0" onClick={clearSearch}>
+            <Play className="w-7 h-7 text-red-600 fill-current" />
+            <span className="font-bold text-lg tracking-tighter hidden xs:block">KevinTube</span>
+          </div>
 
-            <form onSubmit={handleSearch} className="flex-1 max-w-xl mx-2">
-              <div className="relative flex items-center">
-                <div className="absolute left-3 text-zinc-500">
-                  <Search className="w-4 h-4" />
-                </div>
-                <input
-                  type="text"
-                  value={urlInput}
-                  onChange={(e) => setUrlInput(e.target.value)}
-                  placeholder="Tìm kiếm..."
-                  className="w-full bg-zinc-900 border border-zinc-800 focus:border-red-500 rounded-lg py-1.5 pl-9 pr-8 text-sm outline-none transition-all placeholder:text-zinc-600"
-                />
-                {urlInput && (
-                  <button
-                    type="button"
-                    onClick={() => setUrlInput('')}
-                    className="absolute right-1 p-1.5 text-zinc-500 hover:text-white"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                )}
-              </div>
-            </form>
-
-            <div className="flex items-center gap-2 shrink-0">
-              <button 
-                onClick={() => navigate('/')}
-                className="w-9 h-9 flex items-center justify-center bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-400 active:scale-90 transition-transform"
-              >
-                <Home className="w-4 h-4" />
-              </button>
-              <button 
-                onClick={() => { setActiveTab('history'); setIsSearching(false); }}
-                className={`w-9 h-9 flex items-center justify-center rounded-lg active:scale-90 transition-transform ${activeTab === 'history' && !isSearching ? 'bg-red-600 text-white' : 'bg-zinc-900 border border-zinc-800 text-zinc-400'}`}
-              >
-                <History className="w-4 h-4" />
-              </button>
-              <button 
-                onClick={() => { setActiveTab('suggested'); setIsSearching(false); }}
-                className={`w-9 h-9 flex items-center justify-center rounded-lg active:scale-90 transition-transform ${activeTab === 'suggested' && !isSearching ? 'bg-red-600 text-white' : 'bg-zinc-900 border border-zinc-800 text-zinc-400'}`}
-              >
-                <Sparkles className="w-4 h-4" />
+          <form onSubmit={handleSearch} className="flex-1 max-w-md mx-1">
+            <div className="relative flex items-center">
+              <input
+                type="text"
+                value={urlInput}
+                onChange={(e) => setUrlInput(e.target.value)}
+                placeholder="Tìm trên YouTube..."
+                className="w-full bg-[#121212] border border-zinc-700 rounded-full py-2 pl-4 pr-10 text-sm outline-none focus:border-blue-500 placeholder:text-zinc-500"
+              />
+              {urlInput && (
+                <button
+                  type="button"
+                  onClick={() => setUrlInput('')}
+                  className="absolute right-12 p-2 text-zinc-500 active:text-white"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
+              <button type="submit" className="absolute right-0 top-0 bottom-0 px-3 flex items-center justify-center bg-zinc-800 rounded-r-full border-l border-zinc-700 active:bg-zinc-700">
+                <Search className="w-4 h-4 text-zinc-300" />
               </button>
             </div>
+          </form>
+
+          <div className="flex items-center gap-1 shrink-0">
+            <button onClick={() => navigate('/')} className="w-10 h-10 flex items-center justify-center active:bg-zinc-800 rounded-full transition-colors" title="Về Dashboard">
+              <Home className="w-6 h-6" />
+            </button>
           </div>
         </header>
 
-        {/* Main Content Area */}
-        <main className="flex-1 pt-16 pb-8 px-3 sm:px-6 relative">
-          <div className="max-w-[1600px] mx-auto">
-            <div className="flex items-center justify-between gap-3 sm:gap-4 mb-6 sm:mb-10">
-              <div className="flex items-center gap-3 sm:gap-4 truncate">
-                {isSearching ? (
-                  <>
-                    <button 
-                      onClick={clearSearch}
-                      className="w-12 h-12 sm:w-14 sm:h-14 shrink-0 rounded-full bg-zinc-900 flex items-center justify-center hover:bg-zinc-800 transition-colors active:scale-95"
-                      aria-label="Back to Recommended"
-                    >
-                      <ArrowLeft className="w-6 h-6 sm:w-7 sm:h-7 text-zinc-400" />
-                    </button>
-                    <h2 className="text-2xl sm:text-3xl font-display font-bold text-white truncate">Search Results</h2>
-                  </>
-                ) : activeTab === 'history' ? (
-                  <>
-                    <div className="w-12 h-12 sm:w-14 sm:h-14 shrink-0 rounded-full bg-zinc-900 flex items-center justify-center border border-zinc-800">
-                      <History className="w-6 h-6 sm:w-7 sm:h-7 text-red-500" />
-                    </div>
-                    <h2 className="text-2xl sm:text-3xl font-display font-bold text-white truncate">Watch History</h2>
-                  </>
-                ) : (
-                  <>
-                    <div className="w-12 h-12 sm:w-14 sm:h-14 shrink-0 rounded-full bg-zinc-900 flex items-center justify-center border border-zinc-800">
-                      <Sparkles className="w-6 h-6 sm:w-7 sm:h-7 text-red-500" />
-                    </div>
-                    <h2 className="text-2xl sm:text-3xl font-display font-bold text-white truncate">Recommended for You</h2>
-                  </>
-                )}
-              </div>
-              
-              {!isSearching && activeTab === 'history' && history.length > 0 && (
-                   <button 
-                      onClick={() => { setHistory([]); localStorage.removeItem('kevintube_history'); }}
-                      className="flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-2.5 rounded-lg bg-zinc-900 text-red-400 hover:bg-zinc-800 hover:text-red-300 transition-colors border border-zinc-800"
-                   >
-                      <Trash2 className="w-4 h-4 sm:w-5 sm:h-5" />
-                      <span className="font-medium text-sm sm:text-base hidden sm:block">Clear</span> 
-                      <span className="font-medium text-sm sm:text-base sm:hidden">Clear</span> 
-                   </button>
-              )}
+        {/* Categories / Navigation Tabs - Swipeable Style */}
+        <div className="fixed top-14 w-full z-[7000] bg-[#0f0f0f] border-b border-zinc-800 h-12 flex items-center px-4 gap-3 overflow-x-auto no-scrollbar shadow-md">
+           <button 
+            onClick={() => { setActiveTab('suggested'); setIsSearching(false); }}
+            className={`px-4 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all ${activeTab === 'suggested' && !isSearching ? 'bg-white text-black' : 'bg-zinc-800 text-zinc-300 active:bg-zinc-700'}`}
+           >
+            Trang chủ
+           </button>
+           <button 
+            onClick={() => { setActiveTab('history'); setIsSearching(false); }}
+            className={`px-4 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all ${activeTab === 'history' && !isSearching ? 'bg-white text-black' : 'bg-zinc-800 text-zinc-300 active:bg-zinc-700'}`}
+           >
+            Lịch sử
+           </button>
+           <div className="h-5 w-[1px] bg-zinc-800 shrink-0" />
+           <span className="text-[10px] text-zinc-600 uppercase font-bold tracking-widest whitespace-nowrap">Dành cho ô tô</span>
+        </div>
+
+        {/* Main Feed Content - Mobile Scroll Design */}
+        <main className="flex-1 pt-28 pb-20 px-0 relative">
+          <div className="max-w-3xl mx-auto">
+            <div className="px-4 pb-4 flex items-center justify-between">
+               <h2 className="text-xl font-bold">
+                 {isSearching ? 'Kết quả tìm kiếm' : activeTab === 'history' ? 'Lịch sử xem' : 'Gợi ý cho bạn'}
+               </h2>
+               {activeTab === 'history' && history.length > 0 && !isSearching && (
+                 <button 
+                  onClick={() => { setHistory([]); localStorage.removeItem('kevintube_history'); }}
+                  className="text-xs font-bold text-red-500 active:bg-red-500/10 px-2 py-1 rounded"
+                 >
+                  XÓA TẤT CẢ
+                 </button>
+               )}
             </div>
 
             {error && (
-              <div className="p-4 rounded-xl bg-zinc-900 border border-red-500 text-red-400 mb-8 max-w-md">
+              <div className="mx-4 my-4 p-3 rounded-lg bg-red-900/20 border border-red-500/50 text-red-500 text-xs">
                 {error}
               </div>
             )}
 
             {loading && !isSearching && activeTab !== 'history' ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-4 gap-y-8">
-                {[...Array(12)].map((_, i) => (
+              <div className="flex flex-col gap-6 p-4">
+                {[...Array(5)].map((_, i) => (
                   <div key={i} className="animate-pulse">
-                    <div className="w-full aspect-video bg-zinc-900 rounded-xl mb-3"></div>
+                    <div className="w-full aspect-video bg-zinc-900 rounded-lg mb-3"></div>
                     <div className="h-4 bg-zinc-900 rounded-md w-3/4 mb-2"></div>
                     <div className="h-3 bg-zinc-900 rounded-md w-1/2"></div>
                   </div>
                 ))}
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-4 gap-y-8 sm:gap-y-12">
+              <div className="flex flex-col">
                 {displayVideos.map((video, index) => (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index > 15 ? 0 : index * 0.05 }}
+                  <button
                     key={video.videoId + index}
-                    className="group flex flex-col active:scale-[0.98] transition-transform"
+                    onClick={() => playVideo(video)}
+                    className="flex flex-col w-full mb-6 active:bg-zinc-900 transition-colors text-left"
                   >
-                    <button 
-                      type="button"
-                      className="relative w-full aspect-video rounded-2xl overflow-hidden mb-3 sm:mb-4 bg-zinc-900 border border-zinc-800 shadow-md cursor-pointer block p-0 text-left appearance-none focus:outline-none"
-                      onClick={(e) => { e.preventDefault(); playVideo(video); }}
-                      style={{ aspectRatio: '16/9' }}
-                    >
-                      <img
-                        src={video.image || video.thumbnail}
-                        alt={video.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                    <div className="relative aspect-video w-full bg-zinc-900">
+                      <img 
+                        src={video.thumbnail || video.image} 
+                        alt={video.title} 
+                        className="w-full h-full object-cover" 
                         loading="lazy"
+                        referrerPolicy="no-referrer"
                       />
-                      <div className="absolute inset-0 bg-black opacity-10 group-hover:opacity-0 transition-opacity duration-300 pointer-events-none"></div>
                       {video.timestamp && (
-                        <div className="absolute bottom-2 right-2 sm:bottom-3 sm:right-3 bg-black text-xs sm:text-sm font-semibold px-2 sm:px-2.5 py-1 rounded-md text-zinc-100 border border-zinc-700 pointer-events-none" style={{ backgroundColor: 'rgba(0,0,0,0.8)' }}>
+                        <div className="absolute bottom-2 right-2 bg-black/80 text-[10px] font-bold px-1.5 py-0.5 rounded text-white">
                           {video.timestamp}
                         </div>
                       )}
-                    </button>
-                    
-                    <button 
-                      type="button"
-                      className="px-1 sm:px-2 cursor-pointer flex-1 flex flex-col block p-0 bg-transparent text-left appearance-none focus:outline-none" 
-                      onClick={(e) => { e.preventDefault(); playVideo(video); }}
-                    >
-                      <h3 className="font-semibold text-zinc-100 line-clamp-2 leading-snug group-hover:text-red-400 transition-colors mb-2 text-base sm:text-lg">
-                        {video.title}
-                      </h3>
-                      
-                      <div className="text-zinc-400 text-sm sm:text-base flex flex-col gap-1 mt-auto">
-                        <span className="flex items-center gap-1.5 font-medium text-zinc-300">
-                          <User className="w-4 h-4" />
-                          {video.author?.name || 'Unknown'}
-                        </span>
-                        <span className="flex items-center gap-1.5 opacity-80">
-                          <Clock className="w-4 h-4" />
-                          {formatViews(video.views || 0)}
-                        </span>
+                    </div>
+                    <div className="flex gap-3 p-4">
+                      <div className="w-10 h-10 rounded-full bg-zinc-800 shrink-0 flex items-center justify-center border border-zinc-700">
+                        <User className="w-5 h-5 text-zinc-500" />
                       </div>
-                    </button>
-                  </motion.div>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="text-sm font-bold line-clamp-2 leading-snug mb-1 text-zinc-100">{video.title}</h3>
+                        <p className="text-[11px] text-zinc-500 flex items-center gap-1">
+                          <span className="font-semibold text-zinc-400">{video.author?.name || 'YouTube Channel'}</span>
+                          <span>•</span>
+                          <span>{formatViews(video.views || 0)} lượt xem</span>
+                        </p>
+                      </div>
+                    </div>
+                  </button>
                 ))}
-              </div>
-            )}
-            
-            {(!loading && displayVideos.length === 0 && !error) && (
-              <div className="flex flex-col items-center justify-center py-20 text-zinc-500">
-                {activeTab === 'history' && !isSearching ? (
-                  <>
-                    <History className="w-16 h-16 mb-4 opacity-20" />
-                    <p className="text-lg">Your watch history is empty.</p>
-                  </>
-                ) : (
-                  <>
-                    <Search className="w-16 h-16 mb-4 opacity-20" />
-                    <p className="text-lg">No videos found. Try a different search.</p>
-                  </>
+
+                {displayVideos.length === 0 && !loading && (
+                   <div className="flex flex-col items-center justify-center py-24 text-center px-6">
+                      <div className="w-20 h-20 bg-zinc-900 rounded-full flex items-center justify-center mb-6">
+                         {activeTab === 'history' ? <History className="w-10 h-10 text-zinc-700" /> : <Play className="w-10 h-10 text-zinc-700" />}
+                      </div>
+                      <h2 className="text-lg font-bold mb-2">Chưa có video nào</h2>
+                      <p className="text-zinc-500 text-xs">Hãy tìm kiếm nội dung bạn muốn xem hoặc dán link YouTube.</p>
+                   </div>
                 )}
               </div>
             )}
@@ -421,91 +371,91 @@ export default function App() {
         </main>
       </div>
 
-      {/* Floating / FullScreen Player */}
+      {/* Full-Screen / Mobile-Optimized Player Overlay */}
       {activeVideo && (
-        <div
-          className={
-            activeVideo.isMinimized
-              ? "fixed bottom-2 right-2 w-[240px] bg-zinc-900 rounded-lg shadow-2xl z-[9000] border border-zinc-800 overflow-hidden"
-              : "fixed inset-0 z-[9000] bg-zinc-950 overflow-y-auto flex flex-col"
-          }
-        >
-          {/* Close Button UI - Critical for Android */}
-          {!activeVideo.isMinimized && (
-            <div className="bg-zinc-900 border-b border-zinc-800 p-2 flex items-center justify-between shrink-0 sticky top-0 z-[10010]">
-               <span className="text-[10px] font-bold truncate max-w-[180px] ml-1">{activeVideo.details?.title || 'Playing...'}</span>
-               <div className="flex items-center gap-2">
-                 <button onClick={(e) => { e.stopPropagation(); setActiveVideo(p => p ? { ...p, isMinimized: true } : null); }} className="w-10 h-10 flex items-center justify-center bg-zinc-800 rounded-lg active:scale-90"><Minimize2 className="w-5 h-5" /></button>
-                 <button onClick={(e) => { e.stopPropagation(); setActiveVideo(null); }} className="w-10 h-10 flex items-center justify-center bg-red-600/20 text-red-500 rounded-lg active:scale-90"><X className="w-5 h-5" /></button>
-               </div>
-            </div>
-          )}
-          
-          {activeVideo.isMinimized && (
-             <div className="flex items-center justify-between p-2 bg-zinc-800">
-                <span className="text-[10px] truncate flex-1">Đang phát...</span>
-                <X onClick={() => setActiveVideo(null)} className="w-4 h-4 cursor-pointer" />
-             </div>
-          )}
+        <div className={`fixed inset-0 z-[10000] bg-black flex flex-col ${activeVideo.isMinimized ? 'hidden' : 'block'}`}>
+          {/* Player Top Controls */}
+          <div className="h-14 bg-black/50 flex items-center justify-between px-4 sticky top-0 z-[10010]">
+             <button onClick={(e) => { e.stopPropagation(); setActiveVideo(p => p ? { ...p, isMinimized: true } : null); }} className="p-2 active:bg-white/10 rounded-full"><ChevronDown className="w-8 h-8" /></button>
+             <button onClick={(e) => { e.stopPropagation(); setActiveVideo(null); }} className="p-2 text-red-500 active:bg-red-500/10 rounded-full"><X className="w-8 h-8" /></button>
+          </div>
 
-          <div ref={playerContainerRef} className={`w-full ${activeVideo.isMinimized ? 'aspect-video' : 'flex-1 overflow-y-auto p-0'}`}>
-            <div className="max-w-5xl mx-auto w-full h-full">
-              <div className="aspect-video w-full bg-black">
-                <YouTube
-                  key={activeVideo.id}
-                  videoId={activeVideo.id}
-                  className="w-full h-full"
-                  opts={{
-                    width: '100%',
-                    height: '100%',
-                    playerVars: {
-                      autoplay: 1,
-                      playsinline: 1,
-                      modestbranding: 1,
-                      rel: 0,
-                      showinfo: 0,
-                      fs: 1
-                    }
-                  }}
-                  onReady={(e) => {
-                    try { e.target.playVideo(); } catch(err) {}
-                  }}
-                  onEnd={handleVideoEnded}
-                  style={{ width: '100%', height: '100%' }}
-                />
+          <div className="flex-1 overflow-y-auto">
+            <div className="aspect-video w-full bg-black sticky top-14 z-[10005]">
+              <YouTube
+                key={activeVideo.id}
+                videoId={activeVideo.id}
+                className="w-full h-full"
+                opts={{
+                  width: '100%',
+                  height: '100%',
+                  playerVars: {
+                    autoplay: 1,
+                    playsinline: 1,
+                    modestbranding: 1,
+                    rel: 0,
+                    fs: 1
+                  }
+                }}
+                onReady={(e) => {
+                  try { e.target.playVideo(); } catch(err) {}
+                }}
+                onEnd={handleVideoEnded}
+                style={{ width: '100%', height: '100%' }}
+              />
+            </div>
+
+            <div className="p-4">
+              <h1 className="text-lg font-bold mb-3">{activeVideo.details?.title}</h1>
+              <div className="flex items-center gap-3 py-3 border-b border-zinc-800">
+                <div className="w-10 h-10 bg-zinc-800 rounded-full flex items-center justify-center">
+                   <User className="w-6 h-6 text-zinc-500" />
+                </div>
+                <div>
+                   <p className="font-bold text-sm">{activeVideo.details?.author?.name}</p>
+                   <p className="text-xs text-zinc-500">{formatViews(activeVideo.details?.views || 0)} views</p>
+                </div>
               </div>
 
-              {!activeVideo.isMinimized && activeVideo.details && (
-                <div className="p-4">
-                  <h1 className="text-lg font-bold mb-4">{activeVideo.details.title}</h1>
-                  <div className="flex items-center gap-3 mb-6">
-                    <User className="w-8 h-8 p-1.5 bg-zinc-800 rounded-full" />
-                    <div>
-                      <p className="font-bold text-sm">{activeVideo.details.author?.name}</p>
-                      <p className="text-xs text-zinc-500">{formatViews(activeVideo.details.views || 0)}</p>
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-4">
-                     <h3 className="font-bold text-sm border-b border-zinc-900 pb-2">Video liên quan</h3>
-                     <div className="grid grid-cols-1 gap-4">
-                        {activeVideo.related?.slice(0, 5).map((v, i) => (
-                           <div key={'rel-'+i} onClick={() => playVideo(v)} className="flex gap-3 active:bg-zinc-900 p-1 rounded-lg">
-                              <img src={v.thumbnail} className="w-24 aspect-video object-cover rounded-md" />
-                              <div className="flex-1 min-w-0">
-                                 <p className="text-sm font-medium line-clamp-2 leading-tight">{v.title}</p>
-                                 <p className="text-[10px] text-zinc-500 mt-1">{v.author?.name}</p>
-                              </div>
-                           </div>
-                        ))}
-                     </div>
-                  </div>
+              {/* Related Videos List */}
+              <div className="mt-6">
+                <h3 className="font-bold text-sm mb-4">Video liên quan</h3>
+                <div className="flex flex-col gap-4">
+                  {activeVideo.related?.slice(0, 10).map((v, i) => (
+                    <button key={i} onClick={() => playVideo(v)} className="flex gap-3 active:bg-zinc-800 rounded-lg p-1 text-left">
+                       <img src={v.thumbnail} className="w-32 aspect-video object-cover rounded-md flex-shrink-0" />
+                       <div className="flex-1 min-w-0">
+                          <h4 className="text-[13px] font-medium line-clamp-2 leading-tight">{v.title}</h4>
+                          <p className="text-[11px] text-zinc-500 mt-1">{v.author?.name}</p>
+                       </div>
+                    </button>
+                  ))}
                 </div>
-              )}
+              </div>
             </div>
           </div>
         </div>
       )}
+
+      {/* Minimized Player - Bottom Tab Style */}
+      {activeVideo?.isMinimized && (
+        <div 
+          onClick={() => setActiveVideo(p => p ? { ...p, isMinimized: false } : null)}
+          className="fixed bottom-1 right-1 left-1 h-16 bg-zinc-900 border border-zinc-800 rounded-xl z-[9000] flex items-center px-1 overflow-hidden shadow-[0_-10px_30px_rgba(0,0,0,0.5)]"
+        >
+          <div className="w-28 h-full shrink-0">
+             <img src={activeVideo.thumbnail || activeVideo.image} className="w-full h-full object-cover rounded-l-lg" />
+          </div>
+          <div className="flex-1 px-3 min-w-0">
+             <p className="text-[11px] font-bold truncate text-white">{activeVideo.details?.title || 'Đang chơi...'}</p>
+             <p className="text-[10px] text-zinc-500 truncate">{activeVideo.details?.author?.name}</p>
+          </div>
+          <button onClick={(e) => { e.stopPropagation(); setActiveVideo(null); }} className="p-4 active:bg-zinc-800 rounded-full">
+             <X className="w-6 h-6 text-zinc-400" />
+          </button>
+        </div>
+      )}
+
     </div>
   );
 }
