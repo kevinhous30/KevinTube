@@ -145,7 +145,7 @@ export default function AutoPricing() {
             type: Type.OBJECT,
             properties: {
               name: { type: Type.STRING, description: "Tên tuyến đường, ví dụ: Qua cao tốc Pháp Vân" },
-              distance: { type: Type.NUMBER, description: "Khoảng cách tính bằng km" },
+              distance: { type: Type.NUMBER, description: "Khoảng cách tính bằng km (chỉ là số)" },
               duration: { type: Type.STRING, description: "Thời gian di chuyển dự kiến, ví dụ: 2 giờ 30 phút" },
               tollBooths: {
                 type: Type.ARRAY,
@@ -174,21 +174,22 @@ Tôi muốn bạn tính cước xe cho một chuyến đi với các thông tin 
 - Điểm đi: ${departureLocation.display_name}
 - Điểm đến: ${destinationLocation.display_name}
 
-Dựa trên thông tin địa lý Việt Nam thực tế, hãy ước lượng các tuyến đường khả thi nhất để đi từ điểm đi tới điểm đến. 
+Dựa trên thông tin địa lý Việt Nam thực tế, hãy ước lượng ÍT NHẤT 2 HOẶC 3 tuyến đường khả thi để đi từ điểm đi tới điểm đến (ví dụ: một đường cao tốc nếu có, một đường quốc lộ, vv.).
 Với mỗi tuyến đường: 
-- Liệt kê CÁC TÊN TRẠM THU PHÍ (nếu có) trên tuyến đường đó và phí ước tính áp dụng cho BIỂU PHÍ CỦA LOẠI XE ${carType}.
+- Liệt kê CÁC TÊN TRẠM THU PHÍ (nếu có) trên tuyến đường đó và phí ước tính áp dụng cho BIỂU PHÍ CỦA LOẠI XE ${carType}. Nếu không có trạm nào thì mảng tollBooths để rỗng.
 - Tính tổng tiền phí cầu đường.
 - Ước lượng quãng đường.
 - Gợi ý giá tiền thu khách (đã bao gồm xăng xe, cầu đường, lương tài xế, hao mòn, lợi nhuận) sao cho hợp lý so với giá thị trường Việt Nam. Ghi nhớ xe ${fuelType} thì chi phí nhiên liệu sẽ khác nhau (xe điện thường tiết kiệm hơn).
-- Gợi ý giá thu thấp nhất để vẫn đảm bảo lợi nhuận (giá lủng sàn).`;
+- Gợi ý giá thu thấp nhất để vẫn đảm bảo lợi nhuận (giá lủng sàn).
+- Đảm bảo trả số lượng phần tử mảng nhiều hơn 1 nếu có thể. Khác biệt giữa các lộ trình nên ở việc đi cao tốc hoặc không, hoặc đi hướng khác.`;
 
       const response = await ai.models.generateContent({
-        model: 'gemini-2.5-pro',
+        model: 'gemini-1.5-flash', // Using faster and free-tier generous model
         contents: prompt,
         config: {
           responseMimeType: 'application/json',
           responseSchema: responseSchema,
-          temperature: 0.2, // Low temp for more accurate data representation
+          temperature: 0.2,
         }
       });
 
@@ -201,7 +202,7 @@ Với mỗi tuyến đường:
 
     } catch (err: any) {
       console.error(err);
-      setError(err.message || "Đã có lỗi xảy ra trong quá trình tính toán.");
+      setError(err.message || "Đã có lỗi xảy ra trong quá trình tính toán tuyến đường.");
     } finally {
       setIsCalculating(false);
     }
