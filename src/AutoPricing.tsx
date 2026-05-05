@@ -129,10 +129,9 @@ export default function AutoPricing() {
     setRoutes([]);
 
     try {
-      // @ts-ignore
-      const apiKey = import.meta.env.VITE_GEMINI_API_KEY || (typeof process !== 'undefined' ? process.env.GEMINI_API_KEY : undefined);
+      const apiKey = process.env.GEMINI_API_KEY;
       if (!apiKey) {
-        setError("Missing GEMINI API KEY. Nếu bạn deploy trên Vercel, hãy thêm biến môi trường VITE_GEMINI_API_KEY trong Project Settings > Environment Variables nhé.");
+        setError("Missing GEMINI_API_KEY environment variable. Vui lòng kiểm tra cấu hình trong Settings.");
         setIsCalculating(false);
         return;
       }
@@ -184,7 +183,7 @@ Với mỗi tuyến đường:
 - Đảm bảo trả số lượng phần tử mảng nhiều hơn 1 nếu có thể. Khác biệt giữa các lộ trình nên ở việc đi cao tốc hoặc không, hoặc đi hướng khác.`;
 
       const response = await ai.models.generateContent({
-        model: 'gemini-1.5-flash', // Using faster and free-tier generous model
+        model: "gemini-3-flash-preview",
         contents: prompt,
         config: {
           responseMimeType: 'application/json',
@@ -193,9 +192,11 @@ Với mỗi tuyến đường:
         }
       });
 
-      if (response.text) {
-        const result = JSON.parse(response.text) as RouteSuggestion[];
-        setRoutes(result);
+      const text = response.text;
+
+      if (text) {
+        const routesResult = JSON.parse(text) as RouteSuggestion[];
+        setRoutes(routesResult);
       } else {
         setError("AI không thể tạo ra kết quả. Vui lòng thử lại.");
       }
