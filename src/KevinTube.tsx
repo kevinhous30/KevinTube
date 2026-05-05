@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Play, Search, X, Flame, Clock, User, ArrowLeft, History, Maximize2, Minimize2, ChevronDown, Trash2, Sparkles, Volume2, MessageSquare, VolumeX, Home } from 'lucide-react';
+import { Play, Search, X, Flame, Clock, User, ArrowLeft, History, Maximize2, Minimize2, ChevronDown, Trash2, Sparkles, Volume2, MessageSquare, VolumeX, Home, Youtube } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import YouTube from 'react-youtube';
 import { useNavigate } from 'react-router-dom';
@@ -227,134 +227,137 @@ export default function App() {
   const displayVideos = isSearching ? videos : (activeTab === 'history' ? history : videos);
 
   return (
-    <div className="min-h-screen bg-[#0f0f0f] text-white font-sans selection:bg-red-600">
-      <div className="flex flex-col min-h-screen">
-        {/* YouTube-Style Header */}
-        <header className="fixed top-0 w-full z-[8000] bg-[#121212]/95 backdrop-blur-md border-b border-white/5 h-12 px-4 flex items-center justify-between">
-          <div className="flex items-center gap-1 cursor-pointer" onClick={clearSearch}>
-            <div className="w-7 h-7 bg-[#FF0000] rounded-lg flex items-center justify-center">
-              <Play className="w-4 h-4 text-white fill-current ml-0.5" />
-            </div>
-            <span className="font-bold text-lg tracking-tighter">KevinTube</span>
+    <div className="min-h-screen bg-black text-white font-sans flex flex-col">
+      {/* YouTube-Style Header */}
+      <header className="fixed top-0 w-full z-[100] bg-zinc-900 border-b border-zinc-800 h-20 px-6 flex items-center justify-between">
+        <div className="flex items-center gap-3 cursor-pointer" onClick={clearSearch}>
+          <div className="w-10 h-10 bg-red-600 rounded-xl flex items-center justify-center shadow-lg shadow-red-900/40">
+            <Youtube className="w-7 h-7 text-white" />
           </div>
+          <span className="font-bold text-2xl tracking-tighter hidden sm:block">KevinTube</span>
+        </div>
 
-          <div className="flex items-center gap-2">
-            {!isSearching ? (
-              <button 
-                onClick={() => setIsSearching(true)}
-                className="p-2 active:bg-white/10 rounded-full transition-colors"
-              >
-                <Search className="w-5 h-5 text-zinc-300" />
+        <div className="flex-1 max-w-2xl mx-10">
+          <form onSubmit={handleSearch} className="relative group">
+            <input
+              type="text"
+              value={urlInput}
+              onChange={(e) => setUrlInput(e.target.value)}
+              placeholder="Tìm kiếm video hoặc dán link YouTube..."
+              className="w-full bg-black border border-zinc-800 rounded-2xl pl-12 pr-4 py-3 text-lg outline-none focus:border-red-600 transition-all placeholder:text-zinc-700"
+            />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-6 h-6 text-zinc-600 group-focus-within:text-red-600" />
+            {urlInput && (
+              <button type="button" onClick={() => setUrlInput('')} className="absolute right-4 top-1/2 -translate-y-1/2">
+                <X className="w-6 h-6 text-zinc-500" />
               </button>
-            ) : (
-               <form onSubmit={handleSearch} className="flex items-center gap-2">
-                <input
-                  autoFocus
-                  type="text"
-                  value={urlInput}
-                  onChange={(e) => setUrlInput(e.target.value)}
-                  placeholder="Tìm kiếm..."
-                  className="bg-transparent border-none outline-none text-sm w-32 sm:w-48 placeholder:text-zinc-600"
-                />
-                <button type="submit" className="hidden" />
-                <button type="button" onClick={() => setIsSearching(false)} className="p-1">
-                   <X className="w-5 h-5 text-zinc-500" />
-                </button>
-               </form>
             )}
-            <button onClick={() => navigate('/')} className="p-2 active:bg-white/10 rounded-full transition-colors">
-              <Home className="w-5 h-5 text-zinc-300" />
-            </button>
-          </div>
-        </header>
+          </form>
+        </div>
 
-        {/* Categories Chips */}
-        {!isSearching && (
-          <div className="fixed top-12 w-full z-[7000] bg-[#121212]/95 backdrop-blur-md border-b border-white/5 h-11 flex items-center px-4 gap-2 overflow-x-auto no-scrollbar">
+        <div className="flex items-center gap-4">
+          <button onClick={() => navigate('/')} className="w-12 h-12 bg-zinc-800 rounded-2xl flex items-center justify-center border border-zinc-700 active:bg-zinc-700 transition-colors">
+            <Home className="w-6 h-6 text-white" />
+          </button>
+        </div>
+      </header>
+
+      {/* Main Feed Content */}
+      <main className="flex-1 pt-24 pb-20 px-6 overflow-y-auto">
+        <div className="max-w-[1800px] mx-auto">
+          {/* Categories */}
+          <div className="flex items-center gap-3 mb-8 overflow-x-auto no-scrollbar pb-2">
             <button 
-              onClick={() => { setActiveTab('suggested'); }}
-              className={`px-3 py-1 rounded-lg text-xs font-medium whitespace-nowrap transition-all ${activeTab === 'suggested' ? 'bg-white text-black' : 'bg-zinc-800 text-zinc-300'}`}
+              onClick={() => setActiveTab('suggested')}
+              className={`px-6 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-all ${activeTab === 'suggested' ? 'bg-white text-black' : 'bg-zinc-900 text-zinc-400 border border-zinc-800 hover:border-zinc-700'}`}
             >
-              Tất cả
+              🎉 Đề xuất
             </button>
             <button 
-              onClick={() => { setActiveTab('history'); }}
-              className={`px-3 py-1 rounded-lg text-xs font-medium whitespace-nowrap transition-all ${activeTab === 'history' ? 'bg-white text-black' : 'bg-zinc-800 text-zinc-300'}`}
+              onClick={() => setActiveTab('history')}
+              className={`px-6 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-all ${activeTab === 'history' ? 'bg-white text-black' : 'bg-zinc-900 text-zinc-400 border border-zinc-800 hover:border-zinc-700'}`}
             >
-              Đã xem
+              🕒 Đã xem
             </button>
+            <div className="h-6 w-px bg-zinc-800 mx-2"></div>
+            <button className="px-6 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap bg-zinc-900 text-zinc-400 border border-zinc-800">Âm nhạc</button>
+            <button className="px-6 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap bg-zinc-900 text-zinc-400 border border-zinc-800">Trực tiếp</button>
+            <button className="px-6 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap bg-zinc-900 text-zinc-400 border border-zinc-800">Tin tức</button>
           </div>
-        )}
 
-        {/* Main Feed Content */}
-        <main className={`flex-1 ${!isSearching ? 'pt-24' : 'pt-16'} pb-16 px-0`}>
-          <div className="max-w-3xl mx-auto space-y-2">
-            {error && (
-              <div className="mx-4 my-2 p-3 rounded bg-red-900/20 text-red-500 text-xs text-center border border-red-500/20">
-                {error}
-              </div>
-            )}
+          {error && (
+            <div className="mb-8 p-4 rounded-2xl bg-red-900/20 text-red-500 text-sm text-center border border-red-500/30">
+              {error}
+            </div>
+          )}
 
-            {loading ? (
-              <div className="space-y-4 px-0">
-                {[...Array(3)].map((_, i) => (
-                  <div key={i} className="animate-pulse">
-                    <div className="w-full aspect-video bg-zinc-900"></div>
-                    <div className="p-4 space-y-2">
-                      <div className="h-4 bg-zinc-900 rounded-md w-3/4"></div>
-                      <div className="h-3 bg-zinc-900 rounded-md w-1/2"></div>
+          {loading ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
+              {[...Array(10)].map((_, i) => (
+                <div key={i} className="animate-pulse">
+                  <div className="w-full aspect-video bg-zinc-900 rounded-2xl mb-4"></div>
+                  <div className="space-y-3 px-2">
+                    <div className="h-4 bg-zinc-900 rounded-md w-full"></div>
+                    <div className="h-3 bg-zinc-900 rounded-md w-2/3"></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-x-6 gap-y-10">
+              {displayVideos.map((video, index) => (
+                <button
+                  key={video.videoId + index}
+                  onClick={() => playVideo(video)}
+                  className="flex flex-col group active:scale-95 transition-all text-left"
+                >
+                  <div className="relative aspect-video w-full bg-zinc-900 rounded-2xl overflow-hidden mb-4 border border-zinc-800 group-hover:border-red-600/50 transition-colors">
+                    <img 
+                      src={video.thumbnail || video.image} 
+                      alt={video.title} 
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
+                      loading="lazy"
+                      referrerPolicy="no-referrer"
+                    />
+                    <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors"></div>
+                    {video.timestamp && (
+                      <div className="absolute bottom-3 right-3 bg-black/90 text-xs font-black px-2 py-1 rounded-lg text-white">
+                        {video.timestamp}
+                      </div>
+                    )}
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-red-600/0 group-hover:bg-red-600 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all translate-y-4 group-hover:translate-y-0">
+                       <Play className="w-6 h-6 text-white fill-current" />
                     </div>
                   </div>
-                ))}
-              </div>
-            ) : (
-              <div className="flex flex-col">
-                {displayVideos.map((video, index) => (
-                  <button
-                    key={video.videoId + index}
-                    onClick={() => playVideo(video)}
-                    className="flex flex-col w-full active:bg-zinc-900/80 transition-colors text-left"
-                  >
-                    <div className="relative aspect-video w-full bg-zinc-900">
-                      <img 
-                        src={video.thumbnail || video.image} 
-                        alt={video.title} 
-                        className="w-full h-full object-cover" 
-                        loading="lazy"
-                        referrerPolicy="no-referrer"
-                      />
-                      {video.timestamp && (
-                        <div className="absolute bottom-2 right-2 bg-black/80 text-[10px] font-bold px-1.5 py-0.5 rounded text-white">
-                          {video.timestamp}
-                        </div>
-                      )}
+                  <div className="flex gap-4 px-1">
+                    <div className="w-10 h-10 rounded-2xl bg-zinc-900 shrink-0 flex items-center justify-center border border-zinc-800">
+                      <User className="w-6 h-6 text-zinc-600" />
                     </div>
-                    <div className="p-3 flex gap-3">
-                      <div className="w-9 h-9 rounded-full bg-zinc-800 shrink-0 flex items-center justify-center border border-white/5">
-                        <User className="w-5 h-5 text-zinc-500" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h3 className="text-sm font-semibold line-clamp-2 leading-tight mb-0.5 text-zinc-100">{video.title}</h3>
-                        <p className="text-[11px] text-zinc-400">
-                          {video.author?.name || 'YouTube Channel'} • {formatViews(video.views || 0)}
-                        </p>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-base font-bold line-clamp-2 leading-tight mb-2 text-zinc-100 group-hover:text-red-500 transition-colors">{video.title}</h3>
+                      <div className="flex flex-col text-xs text-zinc-500 font-medium">
+                        <span className="hover:text-zinc-300 transition-all">{video.author?.name || 'YouTube Channel'}</span>
+                        <span className="mt-1">{formatViews(video.views || 0)}</span>
                       </div>
                     </div>
-                  </button>
-                ))}
+                  </div>
+                </button>
+              ))}
 
-                {displayVideos.length === 0 && (
-                   <div className="flex flex-col items-center justify-center py-20 text-center px-6">
-                      <Play className="w-12 h-12 text-zinc-800 mb-4" />
-                      <h2 className="text-sm font-bold text-zinc-500">Không tìm thấy video nào</h2>
-                   </div>
-                )}
-              </div>
-            )}
-          </div>
-        </main>
-      </div>
-
+              {displayVideos.length === 0 && (
+                 <div className="col-span-full flex flex-col items-center justify-center py-40 text-center">
+                    <div className="w-20 h-20 bg-zinc-900 rounded-3xl flex items-center justify-center mb-6">
+                      <Youtube className="w-10 h-10 text-zinc-800" />
+                    </div>
+                    <h2 className="text-xl font-bold text-zinc-500">Khám phá nội dung mới</h2>
+                    <p className="text-zinc-600 mt-2">Nhập từ khóa tìm kiếm để bắt đầu trải nghiệm</p>
+                 </div>
+              )}
+            </div>
+          )}
+        </div>
+      </main>
+      
       {/* Full-Screen / Mobile-Optimized Player Overlay */}
       {activeVideo && (
         <div className={`fixed inset-0 z-[10000] bg-black flex flex-col ${activeVideo.isMinimized ? 'hidden' : 'block'}`}>

@@ -214,36 +214,36 @@ Với mỗi tuyến đường:
   };
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-white font-sans selection:bg-indigo-500 selection:text-white flex flex-col">
+    <div className="min-h-screen bg-black text-white font-sans flex flex-col">
       {/* Header */}
-      <header className="w-full z-30 bg-black border-b border-zinc-900 sticky top-0 h-14 px-4 flex items-center justify-between">
-        <div className="flex items-center gap-3">
+      <header className="w-full bg-zinc-900 border-b border-zinc-800 h-20 px-6 flex items-center justify-between sticky top-0 z-[100]">
+        <div className="flex items-center gap-4">
           <button 
               onClick={() => navigate('/')}
-              className="flex items-center justify-center w-9 h-9 bg-zinc-900 border border-zinc-800 active:bg-zinc-800 text-zinc-400 rounded-lg transition-all"
+              className="w-12 h-12 bg-black border border-zinc-700 rounded-xl flex items-center justify-center active:bg-zinc-800 transition-colors"
             >
-              <Home className="w-4 h-4" />
+              <Home className="w-6 h-6 text-zinc-300" />
           </button>
-          <div className="flex items-center gap-2">
-            <Calculator className="w-5 h-5 text-blue-500" />
-            <span className="font-bold text-lg tracking-tight">Tính Cước Xe</span>
+          <div className="flex items-center gap-3">
+            <Calculator className="w-6 h-6 text-blue-500" />
+            <h1 className="font-bold text-2xl tracking-tight">Tính Cước Xe</h1>
           </div>
         </div>
       </header>
 
-      <main className="flex-1 p-4 overflow-y-auto w-full max-w-4xl mx-auto space-y-4">
+      <main className="flex-1 p-6 overflow-y-auto w-full max-w-4xl mx-auto space-y-6">
         
         {/* Form Selection */}
-        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5">
-            <div className="grid grid-cols-2 gap-4 mb-4">
+        <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-8 shadow-2xl">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <div>
-                    <label className="block text-[11px] font-bold text-zinc-500 mb-1.5 uppercase tracking-wider">
-                        Loại xe
+                    <label className="block text-sm font-black text-zinc-500 mb-2 uppercase tracking-widest flex items-center gap-2">
+                        <Car className="w-4 h-4 text-zinc-600" /> Loại xe
                     </label>
                     <select 
                         value={carType}
                         onChange={e => setCarType(e.target.value)}
-                        className="w-full bg-black border border-zinc-800 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-500 transition-colors"
+                        className="w-full bg-black border border-zinc-700 rounded-2xl px-5 py-4 text-lg font-bold outline-none focus:border-blue-500 transition-colors appearance-none cursor-pointer"
                     >
                         {['4 chỗ', '7 chỗ', '9 chỗ', '16 chỗ', '29 chỗ'].map(t => (
                             <option key={t} value={t}>{t}</option>
@@ -251,45 +251,48 @@ Với mỗi tuyến đường:
                     </select>
                 </div>
                 <div>
-                    <label className="block text-[11px] font-bold text-zinc-500 mb-1.5 uppercase tracking-wider">
-                        Nhiên liệu
+                    <label className="block text-sm font-black text-zinc-500 mb-2 uppercase tracking-widest flex items-center gap-2">
+                        <Fuel className="w-4 h-4 text-zinc-600" /> Nhiên liệu
                     </label>
-                    <div className="flex gap-2">
+                    <div className="flex gap-3">
                         {['Xăng', 'Điện'].map(t => (
-                            <label key={t} className={`flex-1 flex items-center justify-center py-2 rounded-lg border cursor-pointer text-xs font-bold transition-all ${fuelType === t ? 'bg-blue-600 border-blue-500 text-white' : 'bg-black border-zinc-800 text-zinc-500 active:bg-zinc-900'}`}>
-                                <input type="radio" name="fuelType" value={t} checked={fuelType === t} onChange={() => setFuelType(t)} className="hidden" />
-                                {t}
-                            </label>
+                            <button
+                                key={t}
+                                onClick={() => setFuelType(t)}
+                                className={`flex-1 py-4 rounded-2xl border-2 font-bold text-lg transition-all ${fuelType === t ? 'bg-blue-600 border-blue-400 text-white shadow-lg shadow-blue-900/40' : 'bg-black border-zinc-700 text-zinc-500 hover:border-zinc-500'}`}
+                            >
+                                {t === 'Xăng' ? '⛽ Xăng' : '⚡ Điện'}
+                            </button>
                         ))}
                     </div>
                 </div>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-6">
                 <div className="relative" ref={departureRef}>
-                    <label className="block text-[11px] font-bold text-zinc-500 mb-1.5 uppercase tracking-wider flex items-center gap-1.5">
-                        <MapPin className="w-3 h-3 text-emerald-500" /> Điểm đi
+                    <label className="block text-sm font-black text-zinc-500 mb-2 uppercase tracking-widest flex items-center gap-2">
+                        <MapPin className="w-4 h-4 text-emerald-500" /> Điểm xuất phát
                     </label>
-                    <div className="relative">
+                    <div className="relative group">
                         <input 
                             type="text" 
-                            placeholder="Nhập nơi đi..."
+                            placeholder="Nhập địa chỉ bắt đầu..."
                             value={departure}
                             onChange={(e) => {
                                 setDeparture(e.target.value);
                                 if (e.target.value === '') setDepartureLocation(null);
                             }}
-                            className="w-full bg-black border border-zinc-800 rounded-lg pl-9 pr-3 py-2.5 text-sm outline-none focus:border-emerald-500 transition-colors text-white placeholder-zinc-700"
+                            className="w-full bg-black border border-zinc-700 rounded-2xl pl-14 pr-6 py-4 text-lg outline-none focus:border-emerald-500 transition-all text-white placeholder:text-zinc-800"
                         />
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-600" />
+                        <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-6 h-6 text-zinc-600 group-focus-within:text-emerald-500" />
                     </div>
 
                     {departureResults.length > 0 && (
-                        <div className="absolute top-full left-0 right-0 mt-1 bg-zinc-900 border border-zinc-800 rounded-lg shadow-2xl overflow-hidden z-20">
+                        <div className="absolute top-full left-0 right-0 mt-2 bg-zinc-800 border border-zinc-700 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] overflow-hidden z-[1000]">
                             {departureResults.map((loc, i) => (
-                                <button key={i} onClick={() => selectDeparture(loc)} className="w-full text-left px-3 py-2 hover:bg-zinc-800 border-b border-zinc-800 last:border-0 text-sm">
-                                    <div className="font-bold text-zinc-300 truncate">{loc.display_name.split(',')[0]}</div>
-                                    <div className="text-[10px] text-zinc-500 truncate">{loc.display_name}</div>
+                                <button key={i} onClick={() => selectDeparture(loc)} className="w-full text-left px-5 py-4 hover:bg-zinc-700 border-b border-zinc-700 last:border-0 transition-colors">
+                                    <div className="font-bold text-white text-base truncate">{loc.display_name.split(',')[0]}</div>
+                                    <div className="text-xs text-zinc-400 truncate mt-1">{loc.display_name}</div>
                                 </button>
                             ))}
                         </div>
@@ -297,28 +300,28 @@ Với mỗi tuyến đường:
                 </div>
 
                 <div className="relative" ref={destinationRef}>
-                    <label className="block text-[11px] font-bold text-zinc-500 mb-1.5 uppercase tracking-wider flex items-center gap-1.5">
-                        <MapPin className="w-3 h-3 text-red-500" /> Điểm đến
+                    <label className="block text-sm font-black text-zinc-500 mb-2 uppercase tracking-widest flex items-center gap-2">
+                        <Navigation className="w-4 h-4 text-red-500" /> Điểm đến
                     </label>
-                    <div className="relative">
+                    <div className="relative group">
                         <input 
                             type="text" 
-                            placeholder="Nhập nơi đến..."
+                            placeholder="Nhập địa chỉ kết thúc..."
                             value={destination}
                             onChange={(e) => {
                                 setDestination(e.target.value);
                                 if (e.target.value === '') setDestinationLocation(null);
                             }}
-                            className="w-full bg-black border border-zinc-800 rounded-lg pl-9 pr-3 py-2.5 text-sm outline-none focus:border-red-500 transition-colors text-white placeholder-zinc-700"
+                            className="w-full bg-black border border-zinc-700 rounded-2xl pl-14 pr-6 py-4 text-lg outline-none focus:border-red-500 transition-all text-white placeholder:text-zinc-800"
                         />
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-600" />
+                        <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-6 h-6 text-zinc-600 group-focus-within:text-red-500" />
                     </div>
                     {destinationResults.length > 0 && (
-                        <div className="absolute top-full left-0 right-0 mt-1 bg-zinc-900 border border-zinc-800 rounded-lg shadow-2xl overflow-hidden z-20">
+                        <div className="absolute top-full left-0 right-0 mt-2 bg-zinc-800 border border-zinc-700 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] overflow-hidden z-[1000]">
                             {destinationResults.map((loc, i) => (
-                                <button key={i} onClick={() => selectDestination(loc)} className="w-full text-left px-3 py-2 hover:bg-zinc-800 border-b border-zinc-800 last:border-0 text-sm">
-                                    <div className="font-bold text-zinc-300 truncate">{loc.display_name.split(',')[0]}</div>
-                                    <div className="text-[10px] text-zinc-500 truncate">{loc.display_name}</div>
+                                <button key={i} onClick={() => selectDestination(loc)} className="w-full text-left px-5 py-4 hover:bg-zinc-700 border-b border-zinc-700 last:border-0 transition-colors">
+                                    <div className="font-bold text-white text-base truncate">{loc.display_name.split(',')[0]}</div>
+                                    <div className="text-xs text-zinc-400 truncate mt-1">{loc.display_name}</div>
                                 </button>
                             ))}
                         </div>
@@ -329,65 +332,82 @@ Với mỗi tuyến đường:
             <button 
                 onClick={calculateFares}
                 disabled={isCalculating || !departureLocation || !destinationLocation}
-                className="w-full mt-6 bg-blue-600 active:bg-blue-700 disabled:opacity-50 text-white font-bold py-3 rounded-lg flex items-center justify-center gap-2 transition-all shadow-lg shadow-blue-900/20"
+                className="w-full mt-10 bg-blue-600 hover:bg-blue-500 active:scale-[0.98] disabled:opacity-30 disabled:active:scale-100 text-white font-black py-5 rounded-2xl flex items-center justify-center gap-3 transition-all text-xl shadow-xl shadow-blue-900/30"
             >
-                {isCalculating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Calculator className="w-4 h-4" />}
-                {isCalculating ? 'Đang tính toán...' : 'Dự toán chuyến đi'}
+                {isCalculating ? <Loader2 className="w-6 h-6 animate-spin" /> : <Calculator className="w-6 h-6" />}
+                {isCalculating ? 'ĐANG TÍNH TOÁN...' : 'BẮT ĐẦU DỰ TOÁN'}
             </button>
             
-            {error && <div className="mt-4 p-3 bg-red-900/20 border border-red-500/20 text-red-400 rounded-lg text-[11px] text-center">{error}</div>}
+            {error && (
+              <div className="mt-6 p-4 bg-red-900/30 border border-red-500/30 text-red-400 rounded-xl text-center text-sm font-medium">
+                {error}
+              </div>
+            )}
         </div>
 
         {/* Results */}
         {routes.length > 0 && (
-            <div className="space-y-4 pb-10">
-                <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest text-center px-4">Đã tìm thấy {routes.length} lộ trình phù hợp</p>
+            <div className="space-y-6 pb-20">
+                <div className="flex items-center gap-4">
+                  <div className="h-px flex-1 bg-zinc-800"></div>
+                  <p className="text-xs font-black text-zinc-500 uppercase tracking-[0.3em]">Kết quả lộ trình</p>
+                  <div className="h-px flex-1 bg-zinc-800"></div>
+                </div>
                 
-                <div className="grid grid-cols-1 gap-4">
+                <div className="grid grid-cols-1 gap-6">
                     {routes.map((route, index) => (
-                        <div key={index} className="bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden">
-                            <div className="p-4 border-b border-zinc-800 flex justify-between items-center bg-zinc-950/50">
+                        <div key={index} className="bg-zinc-900 border border-zinc-800 rounded-[2.5rem] overflow-hidden shadow-2xl">
+                            <div className="p-8 border-b border-zinc-800 bg-gradient-to-r from-zinc-800/20 to-transparent flex justify-between items-start">
                                 <div>
-                                    <h4 className="font-bold text-white text-sm">{route.name}</h4>
-                                    <p className="text-[10px] text-zinc-500">{route.duration}</p>
-                                </div>
-                                <div className="text-right">
-                                    <div className="text-lg font-black text-blue-500">{route.distance} <span className="text-[10px]">km</span></div>
+                                    <div className="flex items-center gap-2 mb-2">
+                                      <span className="px-2 py-0.5 bg-blue-600 text-[10px] font-black rounded uppercase tracking-tighter">Option {index + 1}</span>
+                                      <h4 className="font-bold text-white text-2xl">{route.name}</h4>
+                                    </div>
+                                    <div className="flex items-center gap-4 text-zinc-500 font-bold text-sm uppercase tracking-widest">
+                                      <span>⏱️ {route.duration}</span>
+                                      <span className="w-1.5 h-1.5 rounded-full bg-zinc-700"></span>
+                                      <span>📍 {route.distance} KM</span>
+                                    </div>
                                 </div>
                             </div>
                             
-                            <div className="p-4 space-y-4">
-                                <div className="bg-black/40 rounded-lg p-3 text-[11px] text-zinc-400 italic">
+                            <div className="p-8 space-y-8">
+                                <div className="bg-black p-6 rounded-2xl text-lg text-zinc-400 italic border-l-4 border-blue-600 leading-relaxed capitalize">
                                     "{route.note}"
                                 </div>
                                 
-                                <div className="space-y-2">
-                                    <div className="flex justify-between text-[11px] font-bold text-zinc-500 uppercase">
-                                        <span>Phí cầu đường ({route.tollBooths.length})</span>
-                                        <span className="text-yellow-500">{formatCurrency(route.totalTollFee)}</span>
-                                    </div>
-                                    {route.tollBooths.length > 0 && (
-                                        <div className="grid grid-cols-1 gap-1 pl-2 border-l border-zinc-800">
-                                            {route.tollBooths.slice(0, 3).map((b, i) => (
-                                                <div key={i} className="flex justify-between text-[10px] text-zinc-500">
-                                                    <span className="truncate pr-4">{b.name}</span>
-                                                    <span>{formatCurrency(b.fee)}</span>
-                                                </div>
-                                            ))}
-                                            {route.tollBooths.length > 3 && <div className="text-[9px] text-zinc-600">...và {route.tollBooths.length - 3} trạm khác</div>}
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                  <div className="space-y-4">
+                                      <div className="flex justify-between text-xs font-black text-zinc-500 uppercase tracking-widest border-b border-zinc-800 pb-2">
+                                          <span>Phí cầu đường</span>
+                                          <span className="text-yellow-500">{formatCurrency(route.totalTollFee)}</span>
+                                      </div>
+                                      {route.tollBooths.length > 0 ? (
+                                          <div className="space-y-3">
+                                              {route.tollBooths.map((b, i) => (
+                                                  <div key={i} className="flex justify-between text-sm font-medium">
+                                                      <span className="text-zinc-400">{i+1}. {b.name}</span>
+                                                      <span className="text-zinc-500">{formatCurrency(b.fee)}</span>
+                                                  </div>
+                                              ))}
+                                          </div>
+                                      ) : (
+                                        <div className="bg-zinc-800/30 rounded-xl p-4 text-center text-zinc-600 text-sm font-bold">
+                                          Không có trạm thu phí
                                         </div>
-                                    )}
-                                </div>
+                                      )}
+                                  </div>
 
-                                <div className="grid grid-cols-2 gap-3">
-                                    <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-3 text-center">
-                                        <div className="text-[9px] text-emerald-500/80 mb-0.5 font-bold uppercase tracking-wider">Giá khách</div>
-                                        <div className="text-base font-black text-emerald-400">{formatCurrency(route.proposedPrice)}</div>
-                                    </div>
-                                    <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-3 text-center">
-                                        <div className="text-[9px] text-red-500/80 mb-0.5 font-bold uppercase tracking-wider">Giá lủng sàn</div>
-                                        <div className="text-base font-black text-red-400">{formatCurrency(route.lowestPrice)}</div>
-                                    </div>
+                                  <div className="flex flex-col gap-4">
+                                      <div className="flex-1 bg-[#1a1a1a] border border-emerald-500/20 rounded-3xl p-6 flex flex-col items-center justify-center text-center shadow-lg">
+                                          <div className="text-[11px] text-emerald-500 font-black mb-2 uppercase tracking-widest">Giá niêm yết</div>
+                                          <div className="text-3xl font-black text-emerald-400 tracking-tight">{formatCurrency(route.proposedPrice)}</div>
+                                      </div>
+                                      <div className="flex-1 bg-[#1a1a1a] border border-red-500/20 rounded-3xl p-6 flex flex-col items-center justify-center text-center shadow-lg">
+                                          <div className="text-[11px] text-red-500 font-black mb-2 uppercase tracking-widest">Giá sàn tối thiểu</div>
+                                          <div className="text-3xl font-black text-red-400 tracking-tight">{formatCurrency(route.lowestPrice)}</div>
+                                      </div>
+                                  </div>
                                 </div>
                             </div>
                         </div>
