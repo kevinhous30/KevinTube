@@ -1,35 +1,79 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --color-zinc-950: #09090b;
-  --color-zinc-900: #18181b;
-  --color-zinc-800: #27272a;
-  --color-zinc-400: #a1a1aa;
-  
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Outfit", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
 }
 
+:root {
+  --car-bg: #000000;
+  --car-surface: #0a0a0a;
+  --car-border: #1a1a1a;
+  --car-accent: #ff0000;
+}
+
 body {
-  background-color: black;
+  background-color: var(--car-bg);
   color: white;
   font-family: var(--font-sans);
   overscroll-behavior: none;
   -webkit-tap-highlight-color: transparent;
+  user-select: none;
 }
 
 /* Custom scrollbar for car screens */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 10px;
+  height: 10px;
 }
 ::-webkit-scrollbar-track {
-  background: black;
+  background: var(--car-bg);
 }
 ::-webkit-scrollbar-thumb {
-  background: #333;
-  border-radius: 4px;
+  background: #222;
+  border-radius: 5px;
+  border: 2px solid var(--car-bg);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #444;
+  background: #333;
+}
+
+/* High-end glass effect */
+.glass {
+  background: rgba(15, 15, 15, 0.7);
+  backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.glass-red {
+  background: rgba(239, 68, 68, 0.08);
+  backdrop-filter: blur(24px);
+  border: 1px solid rgba(239, 68, 68, 0.15);
+}
+
+/* Interactive elements */
+.card-hover {
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.card-hover:active {
+  transform: scale(0.97);
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 15px rgba(255, 0, 0, 0.1); }
+  50% { box-shadow: 0 0 30px rgba(255, 0, 0, 0.3); }
+}
+
+.animate-glow {
+  animation: pulse-glow 3s infinite ease-in-out;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
