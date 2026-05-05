@@ -3,9 +3,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect } from 'react';
-import { Play, Search, X, Flame, Clock, User, ArrowLeft, History, Maximize2, Minimize2, ChevronDown, Trash2, Sparkles } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Play, Search, X, Flame, Clock, User, ArrowLeft, History, Maximize2, Minimize2, ChevronDown, Trash2, Sparkles, Volume2, MessageSquare, VolumeX } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import ReactPlayer from 'react-player';
 
 interface SearchResult {
   videoId: string;
@@ -21,6 +22,7 @@ interface VideoState {
   id: string;
   isMinimized: boolean;
   details?: SearchResult;
+  related?: SearchResult[];
 }
 
 function extractVideoId(url: string): string | null {
@@ -130,9 +132,24 @@ export default function App() {
     }
   };
 
+  const fetchRelatedVideos = async (id: string, title?: string) => {
+    try {
+      const q = title ? title.split(' ').slice(0, 4).join(' ') : 'trending';
+      const res = await fetch(`/api/search?q=${encodeURIComponent(q)}`);
+      if (res.ok) {
+        const data = await res.json();
+        const related = data.filter((v: SearchResult) => v.videoId !== id);
+        setActiveVideo(prev => prev?.id === id ? { ...prev, related } : prev);
+      }
+    } catch (e) {
+      console.error('Failed to fetch related videos', e);
+    }
+  };
+
   const playVideo = (video: SearchResult) => {
-    setActiveVideo({ id: video.videoId, isMinimized: false, details: video });
+    setActiveVideo({ id: video.videoId, isMinimized: false, details: video, related: [] });
     addToHistory(video);
+    fetchRelatedVideos(video.videoId, video.title);
   };
 
   const playVideoById = async (id: string) => {
@@ -143,8 +160,19 @@ export default function App() {
         const data = await res.json();
         setActiveVideo(prev => prev?.id === id ? { ...prev, details: data } : prev);
         addToHistory(data);
+        fetchRelatedVideos(id, data.title);
+      } else {
+        fetchRelatedVideos(id);
       }
-    } catch(e){}
+    } catch(e){
+      fetchRelatedVideos(id);
+    }
+  };
+
+  const handleVideoEnded = () => {
+    if (activeVideo && activeVideo.related && activeVideo.related.length > 0) {
+      playVideo(activeVideo.related[0]);
+    }
   };
 
   const handleSearch = async (e: React.FormEvent) => {
@@ -426,18 +454,99 @@ export default function App() {
                </div>
             </div>
 
-            {/* Video Player Iframe */}
-            <div className={`flex-1 w-full relative bg-black ${activeVideo.isMinimized ? '' : 'mt-[4.5rem] sm:mt-[5.5rem]'}`}>
-              <div className={activeVideo.isMinimized ? "w-full aspect-video" : "absolute inset-0"}>
-                <iframe
-                  src={`https://www.youtube-nocookie.com/embed/${activeVideo.id}?autoplay=1&modestbranding=1&rel=0&iv_load_policy=3&controls=1`}
-                  title="YouTube video player"
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  allowFullScreen
-                  className="w-full h-full border-none"
-                ></iframe>
+            {/* Player Content */}
+            <div className={`flex-1 w-full flex ${activeVideo.isMinimized ? 'bg-black flex-col' : 'bg-zinc-950 flex-col lg:flex-row overflow-y-auto mt-[4.5rem] sm:mt-[5.5rem] p-4 sm:p-6 lg:p-8 gap-6 lg:gap-8 justify-center'}`}>
+              
+              {/* Left Column: Video + Metadata */}
+              <div className={activeVideo.isMinimized ? 'w-full aspect-video relative' : 'w-full lg:max-w-5xl flex flex-col'}>
+                <div className={activeVideo.isMinimized ? 'absolute inset-0' : 'w-full aspect-video bg-black rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl shrink-0'}>
+                  <ReactPlayer
+                    url={`https://www.youtube.com/watch?v=${activeVideo.id}`}
+                    width="100%"
+                    height="100%"
+                    playing={true}
+                    controls={true}
+                    onEnded={handleVideoEnded}
+                    config={{
+                      youtube: {
+                        playerVars: {
+                          autoplay: 1,
+                          modestbranding: 1,
+                          rel: 0,
+                          iv_load_policy: 3
+                        }
+                      }
+                    }}
+                  />
+                </div>
+
+                {!activeVideo.isMinimized && activeVideo.details && (
+                  <div className="mt-4 sm:mt-6 flex flex-col">
+                    <h1 className="text-xl sm:text-2xl font-bold text-white mb-2">{activeVideo.details.title}</h1>
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-2">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-zinc-800 flex items-center justify-center">
+                          <User className="w-5 h-5 sm:w-6 sm:h-6 text-zinc-400" />
+                        </div>
+                        <div>
+                          <p className="font-semibold text-white text-base sm:text-lg">{activeVideo.details.author?.name}</p>
+                          <p className="text-sm text-zinc-400">{formatViews(activeVideo.details.views || 0)}</p>
+                        </div>
+                      </div>
+                      
+                      {/* AI Dubbing Extension Link */}
+                      <a 
+                        href="https://chromewebstore.google.com/detail/youtube-dubbing-%E2%80%93-transla/oglffgiaiekgeicdgkdlnlkhliajdlja?hl=vi"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 px-4 py-2 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 rounded-xl transition-colors text-sm font-medium text-zinc-300 hover:text-white shrink-0"
+                        title="Cài đặt Tiện ích mở rộng YouTube Dubbing"
+                      >
+                        <Sparkles className="w-4 h-4 text-red-500" />
+                        <span className="hidden sm:inline">Cài Extension AI Lồng Tiếng</span>
+                        <span className="sm:hidden">AI Lồng Tiếng</span>
+                      </a>
+                    </div>
+                  </div>
+                )}
               </div>
+
+              {/* Right Column: Related Videos */}
+              {!activeVideo.isMinimized && (
+                <div className="w-full lg:w-[350px] xl:w-[400px] shrink-0 flex flex-col gap-4">
+                  <h3 className="font-semibold text-lg text-white mb-2">Related Videos</h3>
+                  {activeVideo.related && activeVideo.related.length > 0 ? (
+                    <div className="flex flex-col gap-3">
+                      {activeVideo.related.map((v, i) => (
+                        <button
+                          key={'related-'+v.videoId+'-'+i}
+                          onClick={() => playVideo(v)}
+                          className="flex gap-3 text-left group hover:bg-zinc-900 p-2 -mx-2 rounded-xl transition-colors"
+                        >
+                          <div className="w-40 shrink-0 aspect-video rounded-lg overflow-hidden bg-zinc-800 relative">
+                            <img src={v.thumbnail || v.image} alt={v.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+                            {v.timestamp && (
+                              <div className="absolute bottom-1 right-1 bg-black/80 text-[10px] font-semibold px-1 rounded text-zinc-100">
+                                {v.timestamp}
+                              </div>
+                            )}
+                          </div>
+                          <div className="flex flex-col flex-1 overflow-hidden py-0.5">
+                            <h4 className="text-sm font-medium text-white line-clamp-2 group-hover:text-red-400 transition-colors leading-snug">{v.title}</h4>
+                            <p className="text-xs text-zinc-400 mt-1">{v.author?.name}</p>
+                            <p className="text-xs text-zinc-500 mt-0.5">{formatViews(v.views || 0)}</p>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="flex flex-col text-zinc-500 py-10 items-center justify-center border border-zinc-800/50 rounded-xl border-dashed">
+                      <Clock className="w-8 h-8 mb-2 opacity-20" />
+                      <p className="text-sm">Loading related videos...</p>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </motion.div>
         )}
