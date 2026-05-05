@@ -216,44 +216,34 @@ Với mỗi tuyến đường:
   return (
     <div className="min-h-screen bg-zinc-950 text-white font-sans selection:bg-indigo-500 selection:text-white flex flex-col">
       {/* Header */}
-      <header className="w-full z-30 bg-zinc-950 border-b border-zinc-900 sticky top-0">
-        <div className="max-w-[1600px] mx-auto px-6 h-20 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <button 
-                onClick={() => navigate('/')}
-                className="flex items-center justify-center w-10 h-10 bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 text-zinc-400 hover:text-white rounded-xl transition-all focus:outline-none"
-                title="Back to Dashboard"
-              >
-                <Home className="w-5 h-5" />
-            </button>
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center border border-indigo-500/20">
-                 <Calculator className="w-5 h-5 text-indigo-400" />
-              </div>
-              <span className="font-display font-bold text-xl tracking-tight hidden sm:block">Auto Tính Cước Xe</span>
-            </div>
+      <header className="w-full z-30 bg-black border-b border-zinc-900 sticky top-0 h-14 px-4 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <button 
+              onClick={() => navigate('/')}
+              className="flex items-center justify-center w-9 h-9 bg-zinc-900 border border-zinc-800 active:bg-zinc-800 text-zinc-400 rounded-lg transition-all"
+            >
+              <Home className="w-4 h-4" />
+          </button>
+          <div className="flex items-center gap-2">
+            <Calculator className="w-5 h-5 text-blue-500" />
+            <span className="font-bold text-lg tracking-tight">Tính Cước Xe</span>
           </div>
         </div>
       </header>
 
-      <main className="flex-1 p-6 sm:p-8 lg:p-12 overflow-y-auto w-full max-w-7xl mx-auto space-y-8">
+      <main className="flex-1 p-4 overflow-y-auto w-full max-w-4xl mx-auto space-y-4">
         
         {/* Form Selection */}
-        <div className="bg-zinc-900/50 border border-zinc-800 rounded-3xl p-6 sm:p-8">
-            <h2 className="text-xl font-semibold mb-6 flex items-center gap-2 text-white">
-                <Navigation className="w-5 h-5 text-indigo-400" />
-                Thông tin hành trình
-            </h2>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5">
+            <div className="grid grid-cols-2 gap-4 mb-4">
                 <div>
-                    <label className="block text-sm font-medium text-zinc-400 mb-2 flex items-center gap-2">
-                        <Car className="w-4 h-4" /> Loại xe
+                    <label className="block text-[11px] font-bold text-zinc-500 mb-1.5 uppercase tracking-wider">
+                        Loại xe
                     </label>
                     <select 
                         value={carType}
                         onChange={e => setCarType(e.target.value)}
-                        className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 outline-none focus:border-indigo-500 transition-colors appearance-none"
+                        className="w-full bg-black border border-zinc-800 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-500 transition-colors"
                     >
                         {['4 chỗ', '7 chỗ', '9 chỗ', '16 chỗ', '29 chỗ'].map(t => (
                             <option key={t} value={t}>{t}</option>
@@ -261,20 +251,13 @@ Với mỗi tuyến đường:
                     </select>
                 </div>
                 <div>
-                    <label className="block text-sm font-medium text-zinc-400 mb-2 flex items-center gap-2">
-                        <Fuel className="w-4 h-4" /> Loại nhiên liệu
+                    <label className="block text-[11px] font-bold text-zinc-500 mb-1.5 uppercase tracking-wider">
+                        Nhiên liệu
                     </label>
-                    <div className="flex gap-4">
+                    <div className="flex gap-2">
                         {['Xăng', 'Điện'].map(t => (
-                            <label key={t} className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl border cursor-pointer transition-colors ${fuelType === t ? 'bg-indigo-500/10 border-indigo-500 text-indigo-300' : 'bg-zinc-950 border-zinc-800 text-zinc-400 hover:border-zinc-700'}`}>
-                                <input 
-                                    type="radio" 
-                                    name="fuelType" 
-                                    value={t} 
-                                    checked={fuelType === t} 
-                                    onChange={() => setFuelType(t)}
-                                    className="hidden" 
-                                />
+                            <label key={t} className={`flex-1 flex items-center justify-center py-2 rounded-lg border cursor-pointer text-xs font-bold transition-all ${fuelType === t ? 'bg-blue-600 border-blue-500 text-white' : 'bg-black border-zinc-800 text-zinc-500 active:bg-zinc-900'}`}>
+                                <input type="radio" name="fuelType" value={t} checked={fuelType === t} onChange={() => setFuelType(t)} className="hidden" />
                                 {t}
                             </label>
                         ))}
@@ -282,37 +265,31 @@ Với mỗi tuyến đường:
                 </div>
             </div>
 
-            <div className="space-y-6">
+            <div className="space-y-4">
                 <div className="relative" ref={departureRef}>
-                    <label className="block text-sm font-medium text-zinc-400 mb-2 flex items-center gap-2">
-                        <MapPin className="w-4 h-4 text-emerald-400" /> Điểm đi
+                    <label className="block text-[11px] font-bold text-zinc-500 mb-1.5 uppercase tracking-wider flex items-center gap-1.5">
+                        <MapPin className="w-3 h-3 text-emerald-500" /> Điểm đi
                     </label>
                     <div className="relative">
                         <input 
                             type="text" 
-                            placeholder="Nhập địa chỉ, tên đường, khu vực..."
+                            placeholder="Nhập nơi đi..."
                             value={departure}
                             onChange={(e) => {
                                 setDeparture(e.target.value);
-                                if (e.target.value === '') {
-                                    setDepartureLocation(null);
-                                }
+                                if (e.target.value === '') setDepartureLocation(null);
                             }}
-                            className="w-full bg-zinc-950 border border-zinc-800 rounded-xl pl-11 pr-4 py-3 outline-none focus:border-emerald-500 transition-colors text-white placeholder-zinc-600"
+                            className="w-full bg-black border border-zinc-800 rounded-lg pl-9 pr-3 py-2.5 text-sm outline-none focus:border-emerald-500 transition-colors text-white placeholder-zinc-700"
                         />
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-500" />
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-600" />
                     </div>
 
                     {departureResults.length > 0 && (
-                        <div className="absolute top-full left-0 right-0 mt-2 bg-zinc-800 border border-zinc-700 rounded-xl shadow-xl overflow-hidden z-20">
+                        <div className="absolute top-full left-0 right-0 mt-1 bg-zinc-900 border border-zinc-800 rounded-lg shadow-2xl overflow-hidden z-20">
                             {departureResults.map((loc, i) => (
-                                <button 
-                                    key={i}
-                                    onClick={() => selectDeparture(loc)}
-                                    className="w-full text-left px-4 py-3 hover:bg-zinc-700 border-b border-zinc-700/50 last:border-0 transition-colors"
-                                >
-                                    <div className="font-medium text-zinc-200 line-clamp-1">{loc.display_name.split(',')[0]}</div>
-                                    <div className="text-sm text-zinc-400 line-clamp-1">{loc.display_name}</div>
+                                <button key={i} onClick={() => selectDeparture(loc)} className="w-full text-left px-3 py-2 hover:bg-zinc-800 border-b border-zinc-800 last:border-0 text-sm">
+                                    <div className="font-bold text-zinc-300 truncate">{loc.display_name.split(',')[0]}</div>
+                                    <div className="text-[10px] text-zinc-500 truncate">{loc.display_name}</div>
                                 </button>
                             ))}
                         </div>
@@ -320,34 +297,28 @@ Với mỗi tuyến đường:
                 </div>
 
                 <div className="relative" ref={destinationRef}>
-                    <label className="block text-sm font-medium text-zinc-400 mb-2 flex items-center gap-2">
-                        <MapPin className="w-4 h-4 text-red-400" /> Điểm đến
+                    <label className="block text-[11px] font-bold text-zinc-500 mb-1.5 uppercase tracking-wider flex items-center gap-1.5">
+                        <MapPin className="w-3 h-3 text-red-500" /> Điểm đến
                     </label>
                     <div className="relative">
                         <input 
                             type="text" 
-                            placeholder="Nhập địa chỉ, tên đường, khu vực..."
+                            placeholder="Nhập nơi đến..."
                             value={destination}
                             onChange={(e) => {
                                 setDestination(e.target.value);
-                                if (e.target.value === '') {
-                                    setDestinationLocation(null);
-                                }
+                                if (e.target.value === '') setDestinationLocation(null);
                             }}
-                            className="w-full bg-zinc-950 border border-zinc-800 rounded-xl pl-11 pr-4 py-3 outline-none focus:border-red-500 transition-colors text-white placeholder-zinc-600"
+                            className="w-full bg-black border border-zinc-800 rounded-lg pl-9 pr-3 py-2.5 text-sm outline-none focus:border-red-500 transition-colors text-white placeholder-zinc-700"
                         />
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-500" />
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-600" />
                     </div>
                     {destinationResults.length > 0 && (
-                        <div className="absolute top-full left-0 right-0 mt-2 bg-zinc-800 border border-zinc-700 rounded-xl shadow-xl overflow-hidden z-20">
+                        <div className="absolute top-full left-0 right-0 mt-1 bg-zinc-900 border border-zinc-800 rounded-lg shadow-2xl overflow-hidden z-20">
                             {destinationResults.map((loc, i) => (
-                                <button 
-                                    key={i}
-                                    onClick={() => selectDestination(loc)}
-                                    className="w-full text-left px-4 py-3 hover:bg-zinc-700 border-b border-zinc-700/50 last:border-0 transition-colors"
-                                >
-                                    <div className="font-medium text-zinc-200 line-clamp-1">{loc.display_name.split(',')[0]}</div>
-                                    <div className="text-sm text-zinc-400 line-clamp-1">{loc.display_name}</div>
+                                <button key={i} onClick={() => selectDestination(loc)} className="w-full text-left px-3 py-2 hover:bg-zinc-800 border-b border-zinc-800 last:border-0 text-sm">
+                                    <div className="font-bold text-zinc-300 truncate">{loc.display_name.split(',')[0]}</div>
+                                    <div className="text-[10px] text-zinc-500 truncate">{loc.display_name}</div>
                                 </button>
                             ))}
                         </div>
@@ -355,91 +326,68 @@ Với mỗi tuyến đường:
                 </div>
             </div>
 
-             {/* Action Button */}
-            <div className="mt-8 flex justify-end">
-                <button 
-                  onClick={calculateFares}
-                  disabled={isCalculating || !departureLocation || !destinationLocation}
-                  className="bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium px-8 py-3.5 rounded-xl transition-all shadow-lg shadow-indigo-500/20 flex items-center gap-2"
-                >
-                  {isCalculating ? (
-                    <>
-                      <Loader2 className="w-5 h-5 animate-spin" />
-                      Đang xử lý AI...
-                    </>
-                  ) : (
-                    <>
-                      Dự toán chuyến đi
-                      <ArrowRight className="w-5 h-5" />
-                    </>
-                  )}
-                </button>
-            </div>
+            <button 
+                onClick={calculateFares}
+                disabled={isCalculating || !departureLocation || !destinationLocation}
+                className="w-full mt-6 bg-blue-600 active:bg-blue-700 disabled:opacity-50 text-white font-bold py-3 rounded-lg flex items-center justify-center gap-2 transition-all shadow-lg shadow-blue-900/20"
+            >
+                {isCalculating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Calculator className="w-4 h-4" />}
+                {isCalculating ? 'Đang tính toán...' : 'Dự toán chuyến đi'}
+            </button>
             
-            {error && (
-                <div className="mt-6 p-4 bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl text-sm">
-                    {error}
-                </div>
-            )}
+            {error && <div className="mt-4 p-3 bg-red-900/20 border border-red-500/20 text-red-400 rounded-lg text-[11px] text-center">{error}</div>}
         </div>
 
         {/* Results */}
         {routes.length > 0 && (
-            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-8 duration-500">
-                <h3 className="text-2xl font-bold font-display flex items-center gap-3">
-                   Tìm thấy <span className="text-indigo-400">{routes.length}</span> tuyến đường khả thi
-                </h3>
+            <div className="space-y-4 pb-10">
+                <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest text-center px-4">Đã tìm thấy {routes.length} lộ trình phù hợp</p>
                 
-                <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 gap-4">
                     {routes.map((route, index) => (
-                        <div key={index} className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6 sm:p-8 flex flex-col hover:border-indigo-500/30 transition-colors">
-                            <div className="flex justify-between items-start gap-4 mb-4">
+                        <div key={index} className="bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden">
+                            <div className="p-4 border-b border-zinc-800 flex justify-between items-center bg-zinc-950/50">
                                 <div>
-                                    <div className="inline-flex items-center rounded-full border border-zinc-700 bg-zinc-800/50 px-2.5 py-0.5 text-xs font-semibold text-zinc-300 transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 mb-3">
-                                        Lộ trình {index + 1}
-                                    </div>
-                                    <h4 className="text-xl font-bold text-white leading-tight">{route.name}</h4>
+                                    <h4 className="font-bold text-white text-sm">{route.name}</h4>
+                                    <p className="text-[10px] text-zinc-500">{route.duration}</p>
                                 </div>
-                                <div className="text-right shrink-0">
-                                    <div className="text-2xl font-display font-bold text-indigo-400">{route.distance} km</div>
-                                    <div className="text-sm text-zinc-500">{route.duration}</div>
+                                <div className="text-right">
+                                    <div className="text-lg font-black text-blue-500">{route.distance} <span className="text-[10px]">km</span></div>
                                 </div>
                             </div>
                             
-                            <p className="text-sm text-zinc-400 mb-6 italic border-l-2 border-zinc-700 pl-3">
-                                "{route.note}"
-                            </p>
-                            
-                            <div className="bg-zinc-950 rounded-2xl p-5 mb-6 flex-1">
-                                <h5 className="text-sm font-medium text-zinc-300 mb-4 flex items-center justify-between">
-                                    <span>Trạm Thu Phí Dự Kiến ({route.tollBooths.length})</span>
-                                    <span className="text-zinc-500 font-normal">Tổng: <span className="text-yellow-400/90 font-medium">{formatCurrency(route.totalTollFee)}</span></span>
-                                </h5>
+                            <div className="p-4 space-y-4">
+                                <div className="bg-black/40 rounded-lg p-3 text-[11px] text-zinc-400 italic">
+                                    "{route.note}"
+                                </div>
                                 
-                                {route.tollBooths.length === 0 ? (
-                                    <div className="text-sm text-emerald-400/80 bg-emerald-400/10 py-2 border border-emerald-400/20 px-3 rounded-lg flex items-center justify-center">
-                                        Không có trạm thu phí trên tuyến đường này
+                                <div className="space-y-2">
+                                    <div className="flex justify-between text-[11px] font-bold text-zinc-500 uppercase">
+                                        <span>Phí cầu đường ({route.tollBooths.length})</span>
+                                        <span className="text-yellow-500">{formatCurrency(route.totalTollFee)}</span>
                                     </div>
-                                ) : (
-                                    <ul className="space-y-2">
-                                        {route.tollBooths.map((booth, i) => (
-                                            <li key={i} className="flex justify-between items-center text-sm">
-                                                <span className="text-zinc-400 truncate pr-4">{booth.name}</span>
-                                                <span className="font-mono text-zinc-300 shrink-0">{formatCurrency(booth.fee)}</span>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                )}
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-2xl p-4 text-center">
-                                    <div className="text-xs text-emerald-300/70 mb-1 font-medium uppercase tracking-wider">Giá Hợp Đồng Thu Khách</div>
-                                    <div className="text-xl sm:text-2xl font-bold text-emerald-400">{formatCurrency(route.proposedPrice)}</div>
+                                    {route.tollBooths.length > 0 && (
+                                        <div className="grid grid-cols-1 gap-1 pl-2 border-l border-zinc-800">
+                                            {route.tollBooths.slice(0, 3).map((b, i) => (
+                                                <div key={i} className="flex justify-between text-[10px] text-zinc-500">
+                                                    <span className="truncate pr-4">{b.name}</span>
+                                                    <span>{formatCurrency(b.fee)}</span>
+                                                </div>
+                                            ))}
+                                            {route.tollBooths.length > 3 && <div className="text-[9px] text-zinc-600">...và {route.tollBooths.length - 3} trạm khác</div>}
+                                        </div>
+                                    )}
                                 </div>
-                                <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-4 text-center">
-                                    <div className="text-xs text-red-300/70 mb-1 font-medium uppercase tracking-wider">Giá Thấp Nhất (Lủng Sàn)</div>
-                                    <div className="text-xl sm:text-2xl font-bold text-red-400">{formatCurrency(route.lowestPrice)}</div>
+
+                                <div className="grid grid-cols-2 gap-3">
+                                    <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-3 text-center">
+                                        <div className="text-[9px] text-emerald-500/80 mb-0.5 font-bold uppercase tracking-wider">Giá khách</div>
+                                        <div className="text-base font-black text-emerald-400">{formatCurrency(route.proposedPrice)}</div>
+                                    </div>
+                                    <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-3 text-center">
+                                        <div className="text-[9px] text-red-500/80 mb-0.5 font-bold uppercase tracking-wider">Giá lủng sàn</div>
+                                        <div className="text-base font-black text-red-400">{formatCurrency(route.lowestPrice)}</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

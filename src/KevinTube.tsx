@@ -227,92 +227,83 @@ export default function App() {
   const displayVideos = isSearching ? videos : (activeTab === 'history' ? history : videos);
 
   return (
-    <div className="min-h-screen bg-[#0f0f0f] text-zinc-100 font-sans selection:bg-red-600">
+    <div className="min-h-screen bg-[#0f0f0f] text-white font-sans selection:bg-red-600">
       <div className="flex flex-col min-h-screen">
-        {/* Mobile-Style Header - High Contrast & Minimalist */}
-        <header className="fixed top-0 w-full z-[8000] bg-[#0f0f0f]/95 backdrop-blur-md border-b border-zinc-800/50 h-14 px-4 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-1.5 shrink-0 cursor-pointer" onClick={clearSearch}>
-            <div className="w-8 h-8 rounded-full bg-red-600 flex items-center justify-center">
-              <Play className="w-5 h-5 text-white fill-current ml-0.5" />
+        {/* YouTube-Style Header */}
+        <header className="fixed top-0 w-full z-[8000] bg-[#121212]/95 backdrop-blur-md border-b border-white/5 h-12 px-4 flex items-center justify-between">
+          <div className="flex items-center gap-1 cursor-pointer" onClick={clearSearch}>
+            <div className="w-7 h-7 bg-[#FF0000] rounded-lg flex items-center justify-center">
+              <Play className="w-4 h-4 text-white fill-current ml-0.5" />
             </div>
-            <span className="font-bold text-xl tracking-tighter">KevinTube</span>
+            <span className="font-bold text-lg tracking-tighter">KevinTube</span>
           </div>
 
-          <form onSubmit={handleSearch} className="flex-1 max-w-xl">
-            <div className="relative group">
-              <input
-                type="text"
-                value={urlInput}
-                onChange={(e) => setUrlInput(e.target.value)}
-                placeholder="Tìm kiến..."
-                className="w-full bg-zinc-900/50 border border-zinc-800 rounded-full py-2 pl-4 pr-12 text-sm outline-none focus:ring-1 focus:ring-zinc-700 transition-all placeholder:text-zinc-600"
-              />
-              <div className="absolute right-0 top-0 bottom-0 flex items-center pr-3">
-                {urlInput && (
-                  <button
-                    type="button"
-                    onClick={() => setUrlInput('')}
-                    className="p-1 text-zinc-500 active:text-white mr-1"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                )}
-                <button type="submit" className="p-1 text-zinc-400 active:text-white">
-                  <Search className="w-5 h-5" />
+          <div className="flex items-center gap-2">
+            {!isSearching ? (
+              <button 
+                onClick={() => setIsSearching(true)}
+                className="p-2 active:bg-white/10 rounded-full transition-colors"
+              >
+                <Search className="w-5 h-5 text-zinc-300" />
+              </button>
+            ) : (
+               <form onSubmit={handleSearch} className="flex items-center gap-2">
+                <input
+                  autoFocus
+                  type="text"
+                  value={urlInput}
+                  onChange={(e) => setUrlInput(e.target.value)}
+                  placeholder="Tìm kiếm..."
+                  className="bg-transparent border-none outline-none text-sm w-32 sm:w-48 placeholder:text-zinc-600"
+                />
+                <button type="submit" className="hidden" />
+                <button type="button" onClick={() => setIsSearching(false)} className="p-1">
+                   <X className="w-5 h-5 text-zinc-500" />
                 </button>
-              </div>
-            </div>
-          </form>
-
-          <div className="flex items-center shrink-0">
-            <button onClick={() => navigate('/')} className="w-10 h-10 flex items-center justify-center active:bg-zinc-800 rounded-full transition-colors">
-              <Home className="w-6 h-6 text-zinc-300" />
+               </form>
+            )}
+            <button onClick={() => navigate('/')} className="p-2 active:bg-white/10 rounded-full transition-colors">
+              <Home className="w-5 h-5 text-zinc-300" />
             </button>
           </div>
         </header>
 
-        {/* Navigation Tabs - Modern Chips Style */}
-        <div className="fixed top-14 w-full z-[7000] bg-[#0f0f0f]/95 backdrop-blur-md border-b border-zinc-900 h-12 flex items-center px-4 gap-2 overflow-x-auto no-scrollbar">
-           <button 
-            onClick={() => { setActiveTab('suggested'); setIsSearching(false); }}
-            className={`px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${activeTab === 'suggested' && !isSearching ? 'bg-zinc-100 text-[#0f0f0f]' : 'bg-zinc-900 text-zinc-400 active:bg-zinc-800'}`}
-           >
-            Khám phá
-           </button>
-           <button 
-            onClick={() => { setActiveTab('history'); setIsSearching(false); }}
-            className={`px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${activeTab === 'history' && !isSearching ? 'bg-zinc-100 text-[#0f0f0f]' : 'bg-zinc-900 text-zinc-400 active:bg-zinc-800'}`}
-           >
-            Lịch sử
-           </button>
-           <div className="h-4 w-px bg-zinc-800 mx-1 shrink-0" />
-           <span className="text-[10px] text-zinc-600 uppercase font-black tracking-widest whitespace-nowrap">Dashboard</span>
-        </div>
+        {/* Categories Chips */}
+        {!isSearching && (
+          <div className="fixed top-12 w-full z-[7000] bg-[#121212]/95 backdrop-blur-md border-b border-white/5 h-11 flex items-center px-4 gap-2 overflow-x-auto no-scrollbar">
+            <button 
+              onClick={() => { setActiveTab('suggested'); }}
+              className={`px-3 py-1 rounded-lg text-xs font-medium whitespace-nowrap transition-all ${activeTab === 'suggested' ? 'bg-white text-black' : 'bg-zinc-800 text-zinc-300'}`}
+            >
+              Tất cả
+            </button>
+            <button 
+              onClick={() => { setActiveTab('history'); }}
+              className={`px-3 py-1 rounded-lg text-xs font-medium whitespace-nowrap transition-all ${activeTab === 'history' ? 'bg-white text-black' : 'bg-zinc-800 text-zinc-300'}`}
+            >
+              Đã xem
+            </button>
+          </div>
+        )}
 
         {/* Main Feed Content */}
-        <main className="flex-1 pt-28 pb-20 px-0">
-          <div className="max-w-4xl mx-auto">
-            {!isSearching && (
-              <div className="px-4 mb-4">
-                <h2 className="text-xl font-bold tracking-tight">
-                  {activeTab === 'history' ? 'Video đã xem' : 'Dành cho bạn'}
-                </h2>
-              </div>
-            )}
-
+        <main className={`flex-1 ${!isSearching ? 'pt-24' : 'pt-16'} pb-16 px-0`}>
+          <div className="max-w-3xl mx-auto space-y-2">
             {error && (
-              <div className="mx-4 my-4 p-3 rounded-lg bg-red-900/20 border border-red-500/50 text-red-500 text-xs">
+              <div className="mx-4 my-2 p-3 rounded bg-red-900/20 text-red-500 text-xs text-center border border-red-500/20">
                 {error}
               </div>
             )}
 
-            {loading && !isSearching && activeTab !== 'history' ? (
-              <div className="flex flex-col gap-6 p-4">
-                {[...Array(5)].map((_, i) => (
+            {loading ? (
+              <div className="space-y-4 px-0">
+                {[...Array(3)].map((_, i) => (
                   <div key={i} className="animate-pulse">
-                    <div className="w-full aspect-video bg-zinc-900 rounded-lg mb-3"></div>
-                    <div className="h-4 bg-zinc-900 rounded-md w-3/4 mb-2"></div>
-                    <div className="h-3 bg-zinc-900 rounded-md w-1/2"></div>
+                    <div className="w-full aspect-video bg-zinc-900"></div>
+                    <div className="p-4 space-y-2">
+                      <div className="h-4 bg-zinc-900 rounded-md w-3/4"></div>
+                      <div className="h-3 bg-zinc-900 rounded-md w-1/2"></div>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -322,9 +313,9 @@ export default function App() {
                   <button
                     key={video.videoId + index}
                     onClick={() => playVideo(video)}
-                    className="flex flex-col w-full mb-8 active:bg-zinc-900/50 transition-colors text-left group"
+                    className="flex flex-col w-full active:bg-zinc-900/80 transition-colors text-left"
                   >
-                    <div className="relative aspect-video w-full">
+                    <div className="relative aspect-video w-full bg-zinc-900">
                       <img 
                         src={video.thumbnail || video.image} 
                         alt={video.title} 
@@ -333,34 +324,29 @@ export default function App() {
                         referrerPolicy="no-referrer"
                       />
                       {video.timestamp && (
-                        <div className="absolute bottom-2 right-2 bg-black/90 text-[10px] font-black px-1.5 py-0.5 rounded shadow-sm">
+                        <div className="absolute bottom-2 right-2 bg-black/80 text-[10px] font-bold px-1.5 py-0.5 rounded text-white">
                           {video.timestamp}
                         </div>
                       )}
                     </div>
-                    <div className="flex gap-4 p-4">
-                      <div className="w-12 h-12 rounded-full bg-zinc-900 shrink-0 flex items-center justify-center border border-zinc-800">
-                        <User className="w-6 h-6 text-zinc-600" />
+                    <div className="p-3 flex gap-3">
+                      <div className="w-9 h-9 rounded-full bg-zinc-800 shrink-0 flex items-center justify-center border border-white/5">
+                        <User className="w-5 h-5 text-zinc-500" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h3 className="text-md font-bold line-clamp-2 leading-tight mb-1 group-active:text-red-500 transition-colors">{video.title}</h3>
-                        <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-zinc-500 font-medium">
-                          <span>{video.author?.name || 'YouTube Channel'}</span>
-                          <span className="text-[8px] opacity-30">•</span>
-                          <span>{formatViews(video.views || 0)}</span>
-                        </div>
+                        <h3 className="text-sm font-semibold line-clamp-2 leading-tight mb-0.5 text-zinc-100">{video.title}</h3>
+                        <p className="text-[11px] text-zinc-400">
+                          {video.author?.name || 'YouTube Channel'} • {formatViews(video.views || 0)}
+                        </p>
                       </div>
                     </div>
                   </button>
                 ))}
 
-                {displayVideos.length === 0 && !loading && (
-                   <div className="flex flex-col items-center justify-center py-24 text-center px-6">
-                      <div className="w-20 h-20 bg-zinc-900 rounded-full flex items-center justify-center mb-6">
-                         {activeTab === 'history' ? <History className="w-10 h-10 text-zinc-700" /> : <Play className="w-10 h-10 text-zinc-700" />}
-                      </div>
-                      <h2 className="text-lg font-bold mb-2">Chưa có video nào</h2>
-                      <p className="text-zinc-500 text-xs">Hãy tìm kiếm nội dung bạn muốn xem hoặc dán link YouTube.</p>
+                {displayVideos.length === 0 && (
+                   <div className="flex flex-col items-center justify-center py-20 text-center px-6">
+                      <Play className="w-12 h-12 text-zinc-800 mb-4" />
+                      <h2 className="text-sm font-bold text-zinc-500">Không tìm thấy video nào</h2>
                    </div>
                 )}
               </div>
