@@ -129,9 +129,10 @@ export default function AutoPricing() {
     setRoutes([]);
 
     try {
-      const apiKey = process.env.GEMINI_API_KEY;
+      // @ts-ignore
+      const apiKey = import.meta.env.VITE_GEMINI_API_KEY || (typeof process !== 'undefined' ? process.env.GEMINI_API_KEY : undefined);
       if (!apiKey) {
-        setError("Missing GEMINI_API_KEY environment variable. Please configure it in the settings.");
+        setError("Missing GEMINI API KEY. Nếu bạn deploy trên Vercel, hãy thêm biến môi trường VITE_GEMINI_API_KEY trong Project Settings > Environment Variables nhé.");
         setIsCalculating(false);
         return;
       }
