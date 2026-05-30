@@ -2,5 +2,7 @@
   "name": "KevinTube",
   "description": "Watch YouTube videos without ads or interruptions.",
   "requestFramePermissions": [],
-  "majorCapabilities": []
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
 }
