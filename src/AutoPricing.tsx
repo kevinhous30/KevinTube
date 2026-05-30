@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Home, MapPin, Search, Navigation, Calculator, Car, Fuel, Loader2, ArrowRight, X, Info, ShieldCheck, Gauge, Clock } from 'lucide-react';
-import { GoogleGenAI, Type, Schema } from '@google/genai';
 import { motion, AnimatePresence } from 'motion/react';
 
 interface Location {
@@ -109,60 +108,25 @@ export default function AutoPricing() {
     setError(null);
     setRoutes([]);
     try {
-      const apiKey = process.env.GEMINI_API_KEY;
-      if (!apiKey) {
-        setError("Chưa cấu hình API Key. Vui lòng kiểm tra lại.");
-        setIsCalculating(false);
-        return;
-      }
-      const ai = new GoogleGenAI({ apiKey });
-      const responseSchema: Schema = {
-        type: Type.ARRAY,
-        items: {
-          type: Type.OBJECT,
-          properties: {
-            name: { type: Type.STRING },
-            distance: { type: Type.NUMBER },
-            duration: { type: Type.STRING },
-            tollBooths: {
-              type: Type.ARRAY,
-              items: {
-                type: Type.OBJECT,
-                properties: {
-                  name: { type: Type.STRING },
-                  fee: { type: Type.INTEGER }
-                },
-                required: ["name", "fee"]
-              }
-            },
-            totalTollFee: { type: Type.INTEGER },
-            proposedPrice: { type: Type.INTEGER },
-            lowestPrice: { type: Type.INTEGER },
-            note: { type: Type.STRING }
-          },
-          required: ["name", "distance", "duration", "tollBooths", "totalTollFee", "proposedPrice", "lowestPrice", "note"]
-        }
-      };
-      const prompt = `Bạn là chuyên gia tính cước vận tải tại Việt Nam. Tính cước cho:
-- Loại xe: ${carType}, Nhiên liệu: ${fuelType}
-- Từ: ${departureLocation.display_name}
-- Đến: ${destinationLocation.display_name}
-Yêu cầu 2-3 tuyến đường (Cao tốc, quốc lộ). Phí cầu đường theo biểu giá thực tế xe ${carType} tại VN. Giá proposedPrice là giá thu khách, lowestPrice là giá bảo hòa vốn/lãi mỏng.`;
-
-      const response = await ai.models.generateContent({
-        model: "gemini-3-flash-preview",
-        contents: prompt,
-        config: {
-          responseMimeType: 'application/json',
-          responseSchema: responseSchema,
-          temperature: 0.1,
-        }
+      const response = await fetch("/api/calculate-fare", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          carType,
+          fuelType,
+          departureLocation,
+          destinationLocation
+        }),
       });
-      const text = response.text;
-      if (text) {
-        setRoutes(JSON.parse(text) as RouteSuggestion[]);
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || "Lỗi hệ thống khi tải kết quả.");
+      }
+      const data = await response.json();
+      if (Array.isArray(data)) {
+        setRoutes(data as RouteSuggestion[]);
       } else {
-        setError("Không thể tính toán. Vui lòng thử lại.");
+        setError("Không thể tính toán. Định dạng kết quả không hợp lệ.");
       }
     } catch (err: any) {
       setError(err.message || "Lỗi hệ thống khi dự toán.");
